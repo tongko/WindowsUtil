@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using SizeExplorer.UI;
+using System;
 using System.Windows.Forms;
 
 namespace SizeExplorer
@@ -16,7 +14,7 @@ namespace SizeExplorer
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new Form1());
+			Application.Run(new MainWnd());
 		}
 	}
 }

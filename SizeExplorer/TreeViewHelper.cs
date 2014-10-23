@@ -31,12 +31,14 @@ namespace SizeExplorer
 
 		#endregion
 
-		public async Task InitTreeView(TreeView tv, Action initProc)
+		public Task InitTreeView(TreeView tv, Action initProc)
 		{
 			if (tv == null)
 			{
 				tv = new TreeView();
 			}
+
+			return null;
 		}
 	}
 }

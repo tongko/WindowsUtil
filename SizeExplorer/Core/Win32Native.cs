@@ -1,0 +1,131 @@
+﻿using System;
+using System.IO;
+using System.Runtime.InteropServices;
+
+namespace SizeExplorer.Core
+{
+	// ReSharper disable InconsistentNaming
+	internal static class Win32Native
+	{
+		#region Constants
+
+		public const uint IO_REPARSE_TAG_MOUNT_POINT = 0xA0000003;		// Moiunt point or junction, see winnt.h
+		public const uint IO_REPARSE_TAG_SYMLINK = 0xA000000C;			// SYMLINK or SYMLINKD (see http://wesnerm.blogs.com/net_undocumented/2006/10/index.html)
+		public const uint SE_PRIVILEGE_ENABLED = 0x00000002;
+		public const string SE_BACKUP_NAME = "SeBackupPrivilege";
+		public const uint FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
+		public const uint FILE_FLAG_OPEN_REPARSE_POINT = 0x00200000;
+		public const uint FILE_DEVICE_FILE_SYSTEM = 9;
+		public const uint FILE_ANY_ACCESS = 0;
+		public const uint METHOD_BUFFERED = 0;
+		public const int MAXIMUM_REPARSE_DATA_BUFFER_SIZE = 16 * 1024;
+		public const uint TOKEN_ADJUST_PRIVILEGES = 0x0020;
+		public const int FSCTL_GET_REPARSE_POINT = 42;
+
+		#endregion
+
+
+		#region Structs
+
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+		public struct REPARSE_DATA_BUFFER
+		{
+			public uint ReparseTag;
+			public short ReparseDataLength;
+			public short Reserved;
+			public short SubsNameOffset;
+			public short SubsNameLength;
+			public short PrintNameOffset;
+			public short PrintNameLength;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXIMUM_REPARSE_DATA_BUFFER_SIZE)]
+			public char[] ReparseTarget;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct LUID
+		{
+			public uint LowPart;
+			public int HighPart;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct LUID_AND_ATTRIBUTES
+		{
+			public LUID Luid;
+			public uint Attributes;
+		}
+
+		public struct TOKEN_PRIVILEGES
+		{
+			public uint PrivilegeCount;
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]		// !! think we only need one
+			public LUID_AND_ATTRIBUTES[] Privileges;
+		}
+
+		#endregion
+
+
+		#region Dll Imports
+
+		[DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool DeviceIoControl(
+			IntPtr hDevice,
+			uint dwIoControlCode,
+			IntPtr lpInBuffer,
+			uint nInBufferSize,
+			//IntPtr lpOutBuffer, 
+			out REPARSE_DATA_BUFFER outBuffer,
+			uint nOutBufferSize,
+			out uint lpBytesReturned,
+			IntPtr lpOverlapped);
+
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		public static extern IntPtr CreateFile(
+			string fileName,
+			[MarshalAs(UnmanagedType.U4)] FileAccess fileAccess,
+			[MarshalAs(UnmanagedType.U4)] FileShare fileShare,
+			int securityAttributes,
+			[MarshalAs(UnmanagedType.U4)] FileMode creationDisposition,
+			uint flags,
+			IntPtr template);
+
+		[DllImport("advapi32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool OpenProcessToken(IntPtr ProcessHandle,
+			uint DesiredAccess, out IntPtr TokenHandle);
+
+		[DllImport("kernel32.dll")]
+		public static extern IntPtr GetCurrentProcess();
+
+		[DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool LookupPrivilegeValue(string lpSystemName, string lpName,
+			out LUID lpLuid);
+
+		[DllImport("advapi32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool AdjustTokenPrivileges(IntPtr TokenHandle,
+			[MarshalAs(UnmanagedType.Bool)]bool DisableAllPrivileges,
+			ref TOKEN_PRIVILEGES NewState,
+			int BufferLength,
+			//ref TOKEN_PRIVILEGES PreviousState,					!! for some reason this won't accept null
+			IntPtr PreviousState,
+			IntPtr ReturnLength);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool CloseHandle(IntPtr hObject);
+
+		[DllImport("kernel32.dll")]
+		public static extern uint GetCompressedFileSize([In, MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
+			[Out, MarshalAs(UnmanagedType.U4)] out uint lpFileSizeHigh);
+
+		[DllImport("kernel32.dll", SetLastError = true, PreserveSig = true)]
+		public static extern int GetDiskFreeSpace([In, MarshalAs(UnmanagedType.LPWStr)] string lpRootPathName,
+			out uint lpSectorsPerCluster, out uint lpBytesPerSector, out uint lpNumberOfFreeClusters,
+			out uint lpTotalNumberOfClusters);
+
+		#endregion
+	}
+}

@@ -1,0 +1,6 @@
+﻿Disk Size Explorer
+
+Minimum Requirement
+-----------------------------------------------------------------------------------------------
+Supported Client:	Windows XP [Desktop apps only]
+Supported Server:	Windows Server 2003 [Desktop apps only]

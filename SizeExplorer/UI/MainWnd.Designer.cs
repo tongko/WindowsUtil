@@ -1,4 +1,5 @@
-﻿namespace SizeExplorer.UI
+﻿
+namespace SizeExplorer.UI
 {
 	partial class MainWnd
 	{
@@ -28,9 +29,12 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWnd));
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.tvFolder = new System.Windows.Forms.TreeView();
 			this.lvDetails = new System.Windows.Forms.ListView();
+			this.imglIcon = new System.Windows.Forms.ImageList(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
@@ -57,8 +61,11 @@
 			// tvFolder
 			// 
 			this.tvFolder.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tvFolder.ImageIndex = 0;
+			this.tvFolder.ImageList = this.imglIcon;
 			this.tvFolder.Location = new System.Drawing.Point(0, 0);
 			this.tvFolder.Name = "tvFolder";
+			this.tvFolder.SelectedImageIndex = 0;
 			this.tvFolder.Size = new System.Drawing.Size(257, 652);
 			this.tvFolder.TabIndex = 0;
 			// 
@@ -70,6 +77,13 @@
 			this.lvDetails.Size = new System.Drawing.Size(511, 652);
 			this.lvDetails.TabIndex = 0;
 			this.lvDetails.UseCompatibleStateImageBehavior = false;
+			// 
+			// imglIcon
+			// 
+			this.imglIcon.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imglIcon.ImageStream")));
+			this.imglIcon.TransparentColor = System.Drawing.Color.Transparent;
+			this.imglIcon.Images.SetKeyName(0, "Folder.ico");
+			this.imglIcon.Images.SetKeyName(1, "File.ico");
 			// 
 			// MainWnd
 			// 
@@ -92,5 +106,6 @@
 		private System.Windows.Forms.SplitContainer splitContainer1;
 		private System.Windows.Forms.TreeView tvFolder;
 		private System.Windows.Forms.ListView lvDetails;
+		private System.Windows.Forms.ImageList imglIcon;
 	}
 }
