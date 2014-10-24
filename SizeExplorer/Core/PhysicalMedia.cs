@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Management;
 
-namespace SizeExplorer.Model
+namespace SizeExplorer.Core
 {
-	public struct Win32PhysicalMedia
+	internal struct PhysicalMedia
 	{
 		public string Caption;
 		public string Description;
@@ -13,7 +13,7 @@ namespace SizeExplorer.Model
 		public string CreationClassName;
 		public string Manufacturer;
 		public string Model;
-		public string SKU;
+		public string Sku;
 		public string SerialNumber;
 		public string Tag;
 		public string Version;
@@ -29,9 +29,14 @@ namespace SizeExplorer.Model
 		public bool WriteProtectOn;
 		public bool CleanerMedia;
 
-		public static Win32PhysicalMedia FromMedia(ManagementBaseObject media)
+		public static PhysicalMedia Empty = new PhysicalMedia();
+
+		public static explicit operator PhysicalMedia(ManagementBaseObject media)
 		{
-			var m = new Win32PhysicalMedia();
+			if (media == null)
+				return Empty;
+
+			var m = new PhysicalMedia();
 
 			if (media["Caption"] == null)
 				m.Caption = "[NULL]";
@@ -66,9 +71,9 @@ namespace SizeExplorer.Model
 			else
 				m.Model = media["Model"] as string;
 			if (media["SKU"] == null)
-				m.SKU = "[NULL]";
+				m.Sku = "[NULL]";
 			else
-				m.SKU = media["SKU"] as string;
+				m.Sku = media["SKU"] as string;
 			if (media["SerialNumber"] == null)
 				m.SerialNumber = "[NULL]";
 			else
@@ -125,7 +130,6 @@ namespace SizeExplorer.Model
 				m.CleanerMedia = false;
 			else
 				m.CleanerMedia = (bool)media["CleanerMedia"];
-
 
 			return m;
 		}
