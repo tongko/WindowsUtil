@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SizeExplorer", "SizeExplore
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground", "Playground\Playground.csproj", "{1065DD9B-EA7D-4436-90A8-76DBBB7E4260}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SizeExplorer.Controls", "SizeExplorer.Controls\SizeExplorer.Controls.csproj", "{C44E96F2-D6A8-4B79-B076-955A4ED7BA09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{1065DD9B-EA7D-4436-90A8-76DBBB7E4260}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1065DD9B-EA7D-4436-90A8-76DBBB7E4260}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1065DD9B-EA7D-4436-90A8-76DBBB7E4260}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C44E96F2-D6A8-4B79-B076-955A4ED7BA09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C44E96F2-D6A8-4B79-B076-955A4ED7BA09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C44E96F2-D6A8-4B79-B076-955A4ED7BA09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C44E96F2-D6A8-4B79-B076-955A4ED7BA09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -30,5 +36,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{843C13DB-2711-4CF0-8C12-EE74540083CC} = {E836DF0B-67C2-4FC3-ADC2-7A48941B1EB5}
 		{1065DD9B-EA7D-4436-90A8-76DBBB7E4260} = {E836DF0B-67C2-4FC3-ADC2-7A48941B1EB5}
+		{C44E96F2-D6A8-4B79-B076-955A4ED7BA09} = {E836DF0B-67C2-4FC3-ADC2-7A48941B1EB5}
 	EndGlobalSection
 EndGlobal

@@ -1,5 +1,4 @@
-﻿using SizeExplorer.Core;
-using System;
+﻿using System;
 using System.Windows.Forms;
 
 namespace SizeExplorer.UI
@@ -19,23 +18,6 @@ namespace SizeExplorer.UI
 		{
 			base.OnLoad(e);
 
-			LoadTreeView();
-
-			tvFolder.Update();
-		}
-
-		private void LoadTreeView()
-		{
-			var ddi = new DiskDriveInfo();
-			ddi.PopulateInfo(null);
-
-			var root = tvFolder.Nodes.Add(ddi.Index.ToString(), ddi.Name);
-			foreach (var diskDrive in ddi.DiskDrives)
-			{
-				root.Nodes.Add(diskDrive.Index.ToString(), diskDrive.Name);
-			}
-
-			tvFolder.Update();
 		}
 	}
 }

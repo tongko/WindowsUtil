@@ -32,12 +32,10 @@ namespace SizeExplorer.UI
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWnd));
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this.tvFolder = new System.Windows.Forms.TreeView();
-			this.lvDetails = new System.Windows.Forms.ListView();
 			this.imglIcon = new System.Windows.Forms.ImageList(this.components);
+			this.deviceView1 = new SizeExplorer.Controls.DeviceView();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
-			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -49,34 +47,11 @@ namespace SizeExplorer.UI
 			// 
 			// splitContainer1.Panel1
 			// 
-			this.splitContainer1.Panel1.Controls.Add(this.tvFolder);
-			// 
-			// splitContainer1.Panel2
-			// 
-			this.splitContainer1.Panel2.Controls.Add(this.lvDetails);
+			this.splitContainer1.Panel1.Controls.Add(this.deviceView1);
+			this.splitContainer1.Panel1MinSize = 250;
 			this.splitContainer1.Size = new System.Drawing.Size(772, 652);
-			this.splitContainer1.SplitterDistance = 257;
+			this.splitContainer1.SplitterDistance = 320;
 			this.splitContainer1.TabIndex = 0;
-			// 
-			// tvFolder
-			// 
-			this.tvFolder.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tvFolder.ImageIndex = 0;
-			this.tvFolder.ImageList = this.imglIcon;
-			this.tvFolder.Location = new System.Drawing.Point(0, 0);
-			this.tvFolder.Name = "tvFolder";
-			this.tvFolder.SelectedImageIndex = 0;
-			this.tvFolder.Size = new System.Drawing.Size(257, 652);
-			this.tvFolder.TabIndex = 0;
-			// 
-			// lvDetails
-			// 
-			this.lvDetails.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.lvDetails.Location = new System.Drawing.Point(0, 0);
-			this.lvDetails.Name = "lvDetails";
-			this.lvDetails.Size = new System.Drawing.Size(511, 652);
-			this.lvDetails.TabIndex = 0;
-			this.lvDetails.UseCompatibleStateImageBehavior = false;
 			// 
 			// imglIcon
 			// 
@@ -84,6 +59,18 @@ namespace SizeExplorer.UI
 			this.imglIcon.TransparentColor = System.Drawing.Color.Transparent;
 			this.imglIcon.Images.SetKeyName(0, "Folder.ico");
 			this.imglIcon.Images.SetKeyName(1, "File.ico");
+			// 
+			// deviceView1
+			// 
+			this.deviceView1.AutoScroll = true;
+			this.deviceView1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.deviceView1.IndentWidth = 0;
+			this.deviceView1.Item = null;
+			this.deviceView1.Location = new System.Drawing.Point(0, 0);
+			this.deviceView1.Margin = new System.Windows.Forms.Padding(20);
+			this.deviceView1.Name = "deviceView1";
+			this.deviceView1.Size = new System.Drawing.Size(320, 652);
+			this.deviceView1.TabIndex = 0;
 			// 
 			// MainWnd
 			// 
@@ -94,7 +81,6 @@ namespace SizeExplorer.UI
 			this.Name = "MainWnd";
 			this.Text = "Size Explorer";
 			this.splitContainer1.Panel1.ResumeLayout(false);
-			this.splitContainer1.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
 			this.splitContainer1.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -104,8 +90,7 @@ namespace SizeExplorer.UI
 		#endregion
 
 		private System.Windows.Forms.SplitContainer splitContainer1;
-		private System.Windows.Forms.TreeView tvFolder;
-		private System.Windows.Forms.ListView lvDetails;
 		private System.Windows.Forms.ImageList imglIcon;
+		private Controls.DeviceView deviceView1;
 	}
 }

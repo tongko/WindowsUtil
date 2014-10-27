@@ -97,6 +97,15 @@
   <ItemGroup>
     <Content Include="MinRequirement.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SizeExplorer.Controls\SizeExplorer.Controls.csproj">
+      <Project>{c44e96f2-d6a8-4b79-b076-955a4ed7ba09}</Project>
+      <Name>SizeExplorer.Controls</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
