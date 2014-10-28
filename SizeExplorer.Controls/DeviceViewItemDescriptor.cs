@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace SizeExplorer.Controls
@@ -10,9 +11,13 @@ namespace SizeExplorer.Controls
 		public event EventHandler DescriptionChanged;
 		public event EventHandler<TextChangeEventArgs> DescriptionChanging;
 
+		private Color _backColor;
+
 		public DeviceViewItemDescriptor()
 		{
+			SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 			InitializeComponent();
+			_backColor = BackColor;
 		}
 
 		public string Title
@@ -35,6 +40,16 @@ namespace SizeExplorer.Controls
 				lblDesc.Text = value;
 				OnDescriptionChanged();
 			}
+		}
+
+		public Color HighlightColor { get; set; }
+
+		public void SetHighlighted(bool highlighted)
+		{
+			BackColor = highlighted ? HighlightColor : _backColor;
+			lblTitle.BackColor = BackColor;
+			lblDesc.BackColor = BackColor;
+			Invalidate();
 		}
 
 		protected virtual void OnTitleChanging(ref string newTitle)
@@ -60,6 +75,16 @@ namespace SizeExplorer.Controls
 			if (DescriptionChanged != null)
 				DescriptionChanged(this, EventArgs.Empty);
 		}
+
+		//private void ChildMosueEnter(object sender, EventArgs e)
+		//{
+		//	OnMouseEnter(e);
+		//}
+
+		//private void ChildMouseLeave(object sender, EventArgs e)
+		//{
+		//	OnMouseLeave(e);
+		//}
 	}
 
 	public class TextChangeEventArgs : EventArgs

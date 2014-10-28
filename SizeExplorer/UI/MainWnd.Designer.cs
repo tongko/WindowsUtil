@@ -63,11 +63,11 @@ namespace SizeExplorer.UI
 			// deviceView1
 			// 
 			this.deviceView1.AutoScroll = true;
+			this.deviceView1.BackColor = System.Drawing.SystemColors.Window;
 			this.deviceView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.deviceView1.IndentWidth = 0;
-			this.deviceView1.Item = null;
 			this.deviceView1.Location = new System.Drawing.Point(0, 0);
-			this.deviceView1.Margin = new System.Windows.Forms.Padding(20);
+			this.deviceView1.Margin = new System.Windows.Forms.Padding(5);
 			this.deviceView1.Name = "deviceView1";
 			this.deviceView1.Size = new System.Drawing.Size(320, 652);
 			this.deviceView1.TabIndex = 0;

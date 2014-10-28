@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace SizeExplorer.Controls
 {
 	public partial class DeviceView : UserControl
 	{
-		private DeviceViewItem _item;
+		private List<DeviceViewItem> _items;
+		private int _selectedIndex;
 
 		public DeviceView()
 		{
@@ -17,34 +19,65 @@ namespace SizeExplorer.Controls
 				//| ControlStyles.UserPaint
 				, true);
 			InitializeComponent();
-			CustomInit();
+			//CustomInit();
 		}
 
-		protected void CustomInit()
+		public void Add(string key, string title, string description, int indentLevel)
 		{
-			Item = new DeviceViewItem
-			{
-				Anchor = AnchorStyles.Left | AnchorStyles.Right,
-				Title = "Computer",
-				Description = "My desktop computer.",
-				LeftIndent = 0,
-				Left = Margin.Left,
-				Top = 0//Margin.Top
-			};
-			Controls.Add(Item);
+			Add(key, new DeviceViewItem { Title = title, Description = description, LeftIndent = indentLevel * 20 });
 		}
 
-		public DeviceViewItem Item
+		public void Add(string key, DeviceViewItem item)
 		{
-			get { return _item; }
-			set
+			while (Controls.ContainsKey(key))
 			{
-				_item = value;
-				Controls.Add(_item);
+				key += "X";
 			}
+
+			item.Name = key;
+			item.Anchor = item.LeftIndent == 0 ? AnchorStyles.Left | AnchorStyles.Right : AnchorStyles.Left;
+			item.Left = Margin.Left;
+			item.Width = Width - Margin.Right - Margin.Left;
+			if (Controls.Count > 0)
+			{
+				var dvi = Controls[Controls.Count - 1] as DeviceViewItem;
+				item.Top = dvi.Top + dvi.Height - 1;
+			}
+			else
+			{
+				item.Top = Margin.Top;
+			}
+			item.MouseClick += ItemSelected;
+
+			Controls.Add(item);
+			item.Invalidate();
 		}
 
 		public int IndentWidth { get; set; }
+
+		public int SelectedIndex
+		{
+			get { return _selectedIndex; }
+			set
+			{
+				if (_selectedIndex != value)
+				{
+					var dvi = Controls[_selectedIndex] as DeviceViewItem;
+					if (dvi != null)
+					{
+						dvi.Selected = false;
+						dvi.Invalidate();
+					}
+					_selectedIndex = value;
+					dvi = Controls[_selectedIndex] as DeviceViewItem;
+					if (dvi != null)
+					{
+						dvi.Selected = true;
+						dvi.Invalidate();
+					}
+				}
+			}
+		}
 
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Control.SizeChanged"/> event.
@@ -60,6 +93,11 @@ namespace SizeExplorer.Controls
 				if (c != null)
 					c.UpdateLocation();
 			}
+		}
+
+		private void ItemSelected(object sender, MouseEventArgs me)
+		{
+
 		}
 	}
 }
