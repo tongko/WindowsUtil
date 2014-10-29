@@ -69,6 +69,7 @@ namespace SizeExplorer.UI
 			this.deviceView1.Location = new System.Drawing.Point(0, 0);
 			this.deviceView1.Margin = new System.Windows.Forms.Padding(5);
 			this.deviceView1.Name = "deviceView1";
+			this.deviceView1.SelectedIndex = 0;
 			this.deviceView1.Size = new System.Drawing.Size(320, 652);
 			this.deviceView1.TabIndex = 0;
 			// 

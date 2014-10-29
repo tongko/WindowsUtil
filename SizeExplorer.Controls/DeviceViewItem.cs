@@ -1,39 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Windows.Forms;
 
 namespace SizeExplorer.Controls
 {
 	public partial class DeviceViewItem : UserControl
 	{
-		public event EventHandler<LeftIndentedEventArgs> ImageLeftIndented;
-		public event EventHandler<SelectedEventArgs> ItemSelected;
-
-		private Rectangle _titleBounds;
 		private Rectangle _descBounds;
-		private Rectangle _imageBounds;
-		private Image _image;
-		private int _imgLeftIndentation;
-		private List<DeviceViewItem> _items = new List<DeviceViewItem>();
 		private bool _highlighted;
-		private string _desc;
+		private Rectangle _imageBounds;
+		private int _imgLeftIndentation;
+		private bool _selected;
+		private Rectangle _titleBounds;
 
-		public DeviceViewItem()
-		{
-			SetStyle(ControlStyles.SupportsTransparentBackColor
-				| ControlStyles.AllPaintingInWmPaint
-				| ControlStyles.DoubleBuffer
-				| ControlStyles.FixedHeight
-				| ControlStyles.ResizeRedraw
-				| ControlStyles.OptimizedDoubleBuffer
-				//				| ControlStyles.Selectable
-				| ControlStyles.UserPaint, true);
-			InitializeComponent();
-			_imageBounds = new Rectangle(new Point(3, 3), new Size(64, 64));
-			IndentImage(_imgLeftIndentation);
-		}
+		#region Events
+
+		public event EventHandler<LeftIndentedEventArgs> ImageLeftIndented;
+
+		#endregion
+
+		#region Properties
+
+		public string Description { get; set; }
+		public DeviceView DeviceView { get; set; }
+		public object UserData { get; set; }
+		public Image Image { get; set; }
+		internal int Index { get; set; }
 
 		public int LeftIndent
 		{
@@ -42,140 +36,88 @@ namespace SizeExplorer.Controls
 			{
 				if (value < 0) value = 0;
 
-				if (_imgLeftIndentation == value) return;
-
 				_imgLeftIndentation = value;
-				IndentImage(_imgLeftIndentation);
+				UpdateBounds(_imgLeftIndentation);
 				OnImageLeftIndented(value);
+			}
+		}
+
+		public bool Selected
+		{
+			get { return _selected; }
+			set
+			{
+				_selected = value;
+				Invalidate();
 			}
 		}
 
 		public string Title { get; set; }
 
-		public string Description { get; set; }
+		#endregion
 
-		public IList<DeviceViewItem> Items
+		#region Constructors
+
+		public DeviceViewItem()
 		{
-			get { return _items; }
-			protected set { _items = new List<DeviceViewItem>(value); }
+			SetStyle(
+				//ControlStyles.SupportsTransparentBackColor
+				ControlStyles.AllPaintingInWmPaint
+				| ControlStyles.DoubleBuffer
+				| ControlStyles.FixedHeight
+				| ControlStyles.ResizeRedraw
+				| ControlStyles.OptimizedDoubleBuffer
+				//				| ControlStyles.Selectable
+				| ControlStyles.UserPaint, true);
+			InitializeComponent();
+			_imageBounds = new Rectangle(new Point(3, 3), new Size(64, 64));
+			UpdateBounds(_imgLeftIndentation);
 		}
 
-		public bool Selected { get; set; }
+		#endregion
 
-		public void AddItem(DeviceViewItem item)
-		{
-			item.Parent = Parent;
-		}
-
-		public void UpdateLocation()
-		{
-			Location = new Point(Parent.Margin.Left, Parent.Margin.Top);
-			//Size = new Size(Parent.ClientSize.Width - (Parent.Margin.Right * 2), Size.Height);
-		}
-
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
-		protected override void OnParentChanged(EventArgs e)
-		{
-			base.OnParentChanged(e);
-
-			foreach (var item in Items)
-				item.Parent = Parent;
-		}
-
-		protected virtual void OnImageLeftIndented(int indentation)
-		{
-			if (ImageLeftIndented != null)
-				ImageLeftIndented(this, new LeftIndentedEventArgs { Indentation = indentation });
-		}
-
-		private void IndentImage(int indentation)
-		{
-			if (indentation < 0) indentation = 0;
-
-			_imageBounds.X = Margin.Left + indentation;
-			_imageBounds.Y = Margin.Top;
-			_titleBounds.X = _descBounds.X = _imageBounds.Left + _imageBounds.Width;
-			_titleBounds.Height = _descBounds.Height = 30;
-			_titleBounds.Y = _imageBounds.Y + 2;
-			_descBounds.Y = _titleBounds.Y + _titleBounds.Height;
-			_titleBounds.Width = _descBounds.Width = Width - Margin.Left - Margin.Right - _imageBounds.Width;
-
-			var ico = GetResourceIconBySize("SizeExplorer.Controls.Resources." +
-				(indentation == 0 ? "Computer.ico" : "Device.ico"), _imageBounds.Size);
-			if (ico != null)
-				_image = Bitmap.FromHicon(ico.Handle);
-		}
-
-		protected virtual void OnItemSelected(SelectedEventArgs e)
-		{
-			if (ItemSelected != null)
-				ItemSelected(this, e);
-		}
+		#region Override Methods
 
 		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseClick"/> event.
+		///     Raises the <see cref="E:System.Windows.Forms.Control.MouseClick" /> event.
 		/// </summary>
-		/// <param name="e">An <see cref="T:System.Windows.Forms.MouseEventArgs"/> that contains the event data. </param>
+		/// <param name="e">An <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data. </param>
 		protected override void OnMouseClick(MouseEventArgs e)
 		{
 			Selected = e.Button == MouseButtons.Left;
-
+			if (Selected)
+				DeviceView.UpdateSelected(this);
 			base.OnMouseClick(e);
 		}
 
 		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseEnter"/> event.
+		///     Raises the <see cref="E:System.Windows.Forms.Control.MouseEnter" /> event.
 		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
+		/// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data. </param>
 		protected override void OnMouseEnter(EventArgs e)
 		{
 			base.OnMouseEnter(e);
-			_highlighted = true;
-			Invalidate(ClientRectangle);
+			SetHighlight(true);
 		}
 
 		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseLeave"/> event.
+		///     Raises the <see cref="E:System.Windows.Forms.Control.MouseLeave" /> event.
 		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
+		/// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data. </param>
 		protected override void OnMouseLeave(EventArgs e)
 		{
-			if (ClientRectangle.Contains(PointToClient(MousePosition)))
-				return;
-
 			base.OnMouseLeave(e);
-			_highlighted = false;
-			Invalidate(ClientRectangle);
+			SetHighlight(false);
 		}
 
 		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.GotFocus"/> event.
+		///     Raises the <see cref="E:System.Windows.Forms.Control.Paint" /> event.
 		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
-		protected override void OnGotFocus(EventArgs e)
-		{
-			Selected = true;
-			base.OnGotFocus(e);
-		}
-
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.LostFocus"/> event.
-		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
-		protected override void OnLostFocus(EventArgs e)
-		{
-			Selected = false;
-			base.OnLostFocus(e);
-		}
-
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.Paint"/> event.
-		/// </summary>
-		/// <param name="e">A <see cref="T:System.Windows.Forms.PaintEventArgs"/> that contains the event data. </param>
+		/// <param name="e">A <see cref="T:System.Windows.Forms.PaintEventArgs" /> that contains the event data. </param>
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			//base.OnPaint(e);
-			var g = e.Graphics;
+			Graphics g = e.Graphics;
 
 			if (_highlighted && Selected)
 			{
@@ -213,13 +155,15 @@ namespace SizeExplorer.Controls
 			else
 				EraseBackground(g);
 
-			g.DrawImage(_image, _imageBounds, 0, 0, _image.Width, _image.Height, GraphicsUnit.Pixel);
+			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+			g.DrawImage(Image, _imageBounds);
 
 			var sf = new StringFormat
 			{
 				Alignment = StringAlignment.Near,
 				LineAlignment = StringAlignment.Center,
-				Trimming = StringTrimming.EllipsisCharacter
+				Trimming = StringTrimming.EllipsisCharacter,
+				FormatFlags = StringFormatFlags.NoWrap
 			};
 
 			var br = new SolidBrush(ForeColor);
@@ -228,6 +172,63 @@ namespace SizeExplorer.Controls
 			tFont = new Font("Trebuchet MS", 9.75f, FontStyle.Regular);
 			g.DrawString(Description, tFont, br, _descBounds, sf);
 		}
+
+		/// <summary>
+		///     Raises the <see cref="E:System.Windows.Forms.Control.SizeChanged" /> event.
+		/// </summary>
+		/// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data. </param>
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			base.OnSizeChanged(e);
+			UpdateBounds(LeftIndent);
+			Invalidate();
+		}
+
+		#endregion
+
+		#region Virtual Methods
+
+		protected virtual void OnImageLeftIndented(int indentation)
+		{
+			if (ImageLeftIndented != null)
+				ImageLeftIndented(this, new LeftIndentedEventArgs { Indentation = indentation });
+		}
+
+		#endregion
+
+		#region Public Methods
+
+		public void AddItem(DeviceViewItem item)
+		{
+			item.Parent = Parent;
+		}
+
+		public void UpdateLocation(DeviceViewItem previousItem)
+		{
+			Location = previousItem == null
+				? new Point(Parent.Margin.Left, Parent.Margin.Top)
+				: new Point(Parent.Margin.Left, previousItem.Top + previousItem.Height);
+			Size = new Size(Parent.ClientSize.Width - Parent.Margin.Right - Parent.Margin.Left, Size.Height);
+		}
+
+		#endregion
+
+		#region Protected Methods
+
+		protected Image GetResourceImage(string name)
+		{
+			Image bmp;
+			using (Stream s = EmbededResources.GetResourceStream(name))
+			{
+				bmp = Image.FromStream(s);
+			}
+
+			return bmp;
+		}
+
+		#endregion
+
+		#region Private Methods
 
 		private void EraseBackground(Graphics g)
 		{
@@ -239,12 +240,12 @@ namespace SizeExplorer.Controls
 		{
 			var cp = new Pen(scheme.CornerColor);
 			var p = new Pen(scheme.BorderColor);
-			var cr = ClientRectangle;
+			Rectangle cr = ClientRectangle;
 
-			var l = cr.Left;
-			var t = cr.Top;
-			var r = cr.Right - 1;
-			var b = cr.Bottom - 1;
+			int l = cr.Left;
+			int t = cr.Top;
+			int r = cr.Right - 1;
+			int b = cr.Bottom - 1;
 
 			var pt1 = new Point(l + 2, t);
 			var pt2 = new Point(r - 2, t);
@@ -287,40 +288,65 @@ namespace SizeExplorer.Controls
 			pt1 = new Point(l, b - 1);
 			g.DrawLine(cp, pt2, pt1);
 
-			var bounds = new Rectangle(ClientRectangle.X + 2, ClientRectangle.Y + 2, ClientRectangle.Width - 4,
-				ClientRectangle.Height - 4);
+			var bounds = new Rectangle(cr.X + 2, cr.Y + 2, cr.Width - 4, cr.Height - 4);
 			var gb = new LinearGradientBrush(bounds, scheme.GradientStart, scheme.GradientEnd, LinearGradientMode.Vertical);
 			g.FillRectangle(gb, bounds);
 			gb.Dispose();
 		}
 
-		protected Icon GetResourceIconBySize(string name, Size size)
+		private void UpdateBounds(int indentation)
 		{
-			Icon icon;
-			using (var s = EmbededResources.GetResourceStream(name))
-			{
-				icon = new Icon(s, size);
-			}
+			const int labelHeight = 20;
 
-			return icon;
+			if (indentation < 0) indentation = 0;
+
+			_imageBounds.X = Margin.Left + indentation;
+			_imageBounds.Y = (Height - _imageBounds.Height) / 2 + Margin.Top;
+
+			_titleBounds.X = _descBounds.X = _imageBounds.Left + _imageBounds.Width + 10;
+			_titleBounds.Height = _descBounds.Height = labelHeight;
+			_titleBounds.Y = (Height - 40) / 2 + _imageBounds.Y;
+			_descBounds.Y = _titleBounds.Y + labelHeight;
+			_titleBounds.Width = _descBounds.Width = Width - Margin.Left
+													 - Margin.Right - _imageBounds.Width - LeftIndent - 10;
 		}
 
-		struct ColorScheme
+		#endregion
+
+		internal void SetHighlight(bool highlight)
+		{
+			_highlighted = highlight;
+			Invalidate();
+		}
+
+		#region Nested type: ColorScheme
+
+		private struct ColorScheme
 		{
 			public Color BorderColor;
 			public Color CornerColor;
-			public Color GradientStart;
 			public Color GradientEnd;
+			public Color GradientStart;
 		}
+
+		#endregion
 	}
 
 	public class LeftIndentedEventArgs : EventArgs
 	{
+		#region Properties
+
 		public int Indentation { get; set; }
+
+		#endregion
 	}
 
 	public class SelectedEventArgs : EventArgs
 	{
+		#region Properties
+
 		public int SelectedIndex { get; set; }
+
+		#endregion
 	}
 }

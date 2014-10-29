@@ -59,25 +59,5 @@ namespace SizeExplorer.Controls.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon Computer {
-            get {
-                object obj = ResourceManager.GetObject("Computer", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon Device {
-            get {
-                object obj = ResourceManager.GetObject("Device", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
     }
 }

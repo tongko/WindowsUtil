@@ -35,16 +35,19 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoScroll = true;
+			this.AutoScrollMargin = new System.Drawing.Size(0, 10);
 			this.BackColor = System.Drawing.SystemColors.Window;
 			this.DoubleBuffered = true;
 			this.Margin = new System.Windows.Forms.Padding(0);
 			this.Name = "DeviceView";
-			this.Size = new System.Drawing.Size(411, 583);
+			this.Padding = new System.Windows.Forms.Padding(0, 0, 50, 0);
+			this.Size = new System.Drawing.Size(358, 574);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
+
 
 
 	}

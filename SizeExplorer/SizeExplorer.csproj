@@ -65,6 +65,7 @@
     <Compile Include="UI\MainWnd.Designer.cs">
       <DependentUpon>MainWnd.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Resources\EmbededResources.cs" />
     <Compile Include="UI\TempTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -96,6 +97,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="MinRequirement.txt" />
+    <EmbeddedResource Include="UI\Resources\Partition.png" />
+    <EmbeddedResource Include="UI\Resources\Folder.png" />
+    <EmbeddedResource Include="UI\Resources\Device.png" />
+    <EmbeddedResource Include="UI\Resources\Computer.png" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

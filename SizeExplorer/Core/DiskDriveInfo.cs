@@ -43,6 +43,8 @@ namespace SizeExplorer.Core
 
 		public uint Index { get; set; }
 
+		public PropertyDataCollection Properties { get; set; }
+
 		public InfoStatus Status
 		{
 			get { return _status; }
@@ -90,9 +92,15 @@ namespace SizeExplorer.Core
 			{
 				if (string.IsNullOrWhiteSpace(Name))
 					Name = disk["SystemName"] as string;
-				var di = new DiskDrive { Name = disk["Caption"] as string, Index = (uint)disk["Index"], Size = (ulong)disk["Size"] };
+				var di = new DiskDrive
+				{
+					Properties = disk.Properties,
+					Name = disk["Caption"] as string,
+					Index = (uint)disk["Index"],
+					Size = (ulong)disk["Size"]
+				};
 				_disks.Add(di);
-				di.PopulateInfo(this);
+				di.PopulateInfo(di);
 			}
 
 			Status = InfoStatus.Completed;
@@ -125,6 +133,7 @@ namespace SizeExplorer.Core
 			{
 				var p = new Partition
 				{
+					Properties = part.Properties,
 					Bootable = (bool)part["Bootable"],
 					DiskDrive = parent as DiskDrive,
 					Index = (uint)part["Index"],
@@ -133,7 +142,7 @@ namespace SizeExplorer.Core
 					DeviceId = part["DeviceId"] as string
 				};
 				_parts.Add(p);
-				p.PopulateInfo(this);
+				p.PopulateInfo(p);
 			}
 
 			Status = InfoStatus.Completed;
@@ -178,6 +187,7 @@ namespace SizeExplorer.Core
 
 				var d = new LogicalDrive
 				{
+					Properties = drive.Properties,
 					Index = 0,
 					Name = drive["Caption"] as string,
 					Size = (ulong)drive["Size"]
