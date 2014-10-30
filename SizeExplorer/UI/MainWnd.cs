@@ -69,8 +69,6 @@ namespace SizeExplorer.UI
 			if (e.Item == null || e.Item.UserData == null) return;
 			var info = e.Item.UserData as InfoBase;
 			if (info == null || info.Properties == null) return;
-
-
 		}
 
 		private static string FormatBytes(ulong bytes)
