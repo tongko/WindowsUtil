@@ -1,5 +1,6 @@
 ﻿using SizeExplorer.Controls;
 using SizeExplorer.Core;
+using SizeExplorer.Model;
 using SizeExplorer.UI.Resources;
 using System;
 using System.Drawing;
@@ -7,12 +8,18 @@ using System.Windows.Forms;
 
 namespace SizeExplorer.UI
 {
-	public partial class MainWnd : Form
+	public partial class MainWnd : Form, IHandleThreadException
 	{
+		private bool _waiting;
+		private FileSystemInfo _fsi;
+
 		public MainWnd()
 		{
 			InitializeComponent();
 			deviceView1.ItemMouseClick += ItemSelected;
+			_waiting = false;
+			ThreadExceptionHandlerCallback = HandleThreadException;
+			_fsi = new FileSystemInfo(this);
 		}
 
 		/// <summary>
@@ -69,6 +76,15 @@ namespace SizeExplorer.UI
 			if (e.Item == null || e.Item.UserData == null) return;
 			var info = e.Item.UserData as InfoBase;
 			if (info == null || info.Properties == null) return;
+
+			if (info is LogicalDrive)
+			{
+				_fsi.BeginAnalyze(info.Name);
+			}
+
+			_waiting = true;
+			animCircle.Visible = true;
+			animCircle.Start();
 		}
 
 		private static string FormatBytes(ulong bytes)
@@ -80,5 +96,64 @@ namespace SizeExplorer.UI
 				dblSByte = bytes / 1024.0;
 			return String.Format("{0:0.#} {1}", dblSByte, suffix[i]);
 		}
+
+		/// <summary>
+		/// Raises the <see cref="E:System.Windows.Forms.Form.Activated"/> event.
+		/// </summary>
+		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
+		protected override void OnActivated(EventArgs e)
+		{
+			base.OnActivated(e);
+			if (_waiting)
+			{
+				animCircle.Visible = true;
+				animCircle.Start();
+			}
+			else
+				animCircle.Visible = false;
+		}
+
+		/// <summary>
+		/// Raises the <see cref="E:System.Windows.Forms.Form.Deactivate"/> event.
+		/// </summary>
+		/// <param name="e">The <see cref="T:System.EventArgs"/> that contains the event data. </param>
+		protected override void OnDeactivate(EventArgs e)
+		{
+			base.OnDeactivate(e);
+			animCircle.Stop();
+		}
+
+		/// <summary>
+		/// Raises the <see cref="E:System.Windows.Forms.Form.ResizeBegin"/> event.
+		/// </summary>
+		/// <param name="e">A <see cref="T:System.EventArgs"/> that contains the event data. </param>
+		protected override void OnResizeBegin(EventArgs e)
+		{
+			base.OnResizeBegin(e);
+			animCircle.Stop();
+		}
+
+		/// <summary>
+		/// Raises the <see cref="E:System.Windows.Forms.Form.ResizeEnd"/> event.
+		/// </summary>
+		/// <param name="e">A <see cref="T:System.EventArgs"/> that contains the event data. </param>
+		protected override void OnResizeEnd(EventArgs e)
+		{
+			base.OnResizeEnd(e);
+			animCircle.Start();
+		}
+
+		private void PanelSizeChanged(object sender, EventArgs e)
+		{
+			animCircle.Left = panel1.Width / 2 - animCircle.Width / 2;
+			animCircle.Top = panel1.Height / 2 - animCircle.Height / 2;
+		}
+
+		private void HandleThreadException(object sender, Exception ex)
+		{
+			MessageBox.Show("Error occurs" + ex, "Error in Thread", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+		}
+
+		public ThreadExceptionHandler ThreadExceptionHandlerCallback { get; set; }
 	}
 }

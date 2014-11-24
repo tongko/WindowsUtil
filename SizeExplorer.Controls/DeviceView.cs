@@ -83,12 +83,11 @@ namespace SizeExplorer.Controls
 			base.OnSizeChanged(e);
 
 			DeviceViewItem previous = null;
-			foreach (DeviceViewItem c in Controls.OfType<DeviceViewItem>())
+			foreach (var c in Controls.OfType<DeviceViewItem>())
 			{
 				c.UpdateLocation(previous);
 				previous = c;
 			}
-			//AutoScrollMinSize = Size;
 		}
 
 		#endregion
@@ -154,7 +153,7 @@ namespace SizeExplorer.Controls
 
 		public void Clear()
 		{
-			foreach (object control in Controls)
+			foreach (var control in Controls)
 			{
 				if (control is DeviceViewItem)
 					Controls.Remove(control as DeviceViewItem);

@@ -43,6 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="AnimatedCircle.cs">
+		<SubType>UserControl</SubType>
+	</Compile>
+	<Compile Include="AnimatedCircle.Designer.cs">
+		<DependentUpon>AnimatedCircle.cs</DependentUpon>
+	</Compile>
     <Compile Include="DeviceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -64,6 +70,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AnimatedCircle.resx">
+      <DependentUpon>AnimatedCircle.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DeviceView.resx">
       <DependentUpon>DeviceView.cs</DependentUpon>
     </EmbeddedResource>

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace SizeExplorer.Core
 {
-	internal class ReparsePoint
+	public class ReparsePoint
 	{
 		public enum TagType
 		{

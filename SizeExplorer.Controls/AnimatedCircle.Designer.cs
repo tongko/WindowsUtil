@@ -1,6 +1,6 @@
 ﻿namespace SizeExplorer.Controls
 {
-	partial class DeviceViewItem
+	partial class AnimatedCircle
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -28,22 +28,30 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
+			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.SuspendLayout();
 			// 
-			// DeviceViewItem
+			// timer1
+			// 
+			this.timer1.Interval = 20;
+			this.timer1.Tick += new System.EventHandler(this.TimerTick);
+			// 
+			// AnimatedCircle
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.Transparent;
-			this.DoubleBuffered = true;
-			this.ForeColor = System.Drawing.Color.Silver;
-			this.Name = "DeviceViewItem";
-			this.Size = new System.Drawing.Size(494, 70);
+			this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(183)))), ((int)(((byte)(229)))));
+			this.Name = "AnimatedCircle";
+			this.Size = new System.Drawing.Size(100, 100);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
+
+		private System.Windows.Forms.Timer timer1;
 
 	}
 }

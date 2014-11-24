@@ -17,13 +17,14 @@ namespace SizeExplorer.Core
 		/// -1 - Param error. 
 		/// -2 - Win32 error.
 		/// </returns>
-		public static long GetFileSizeOnDisk(FileInfo info)
+		public static long GetFileSizeOnDisk(string path)
 		{
 			uint dummy, sectorsPerCluster, bytesPerSector;
 
-			if (info.Directory == null)
+			if (string.IsNullOrWhiteSpace(path))
 				return -1;	//	Param error.
 
+			var info = new FileInfo(path);
 			var result = Win32Native.GetDiskFreeSpace(info.Directory.Root.FullName, out sectorsPerCluster, out bytesPerSector,
 				out dummy, out dummy);
 			if (result == 0)
@@ -49,12 +50,12 @@ namespace SizeExplorer.Core
 		/// </summary>
 		/// <param name="info">The file info instance of the specific file.</param>
 		/// <returns>If a file is hard link, or error occurs, return result is true.</returns>
-		public static bool IsHardLink(FileInfo info)
+		public static bool IsHardLink(string info)
 		{
-			if (info == null)
+			if (string.IsNullOrWhiteSpace(info))
 				return true;
 
-			return new ReparsePoint(info.FullName).Tag != ReparsePoint.TagType.None;
+			return new ReparsePoint(info).Tag != ReparsePoint.TagType.None;
 		}
 
 		#endregion

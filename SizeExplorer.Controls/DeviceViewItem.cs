@@ -67,7 +67,7 @@ namespace SizeExplorer.Controls
 				| ControlStyles.FixedHeight
 				| ControlStyles.ResizeRedraw
 				| ControlStyles.OptimizedDoubleBuffer
-				//				| ControlStyles.Selectable
+				| ControlStyles.SupportsTransparentBackColor
 				| ControlStyles.UserPaint, true);
 			InitializeComponent();
 			_imageBounds = new Rectangle(new Point(3, 3), new Size(64, 64));
@@ -123,10 +123,10 @@ namespace SizeExplorer.Controls
 			{
 				var cs = new ColorScheme
 				{
-					BorderColor = Color.FromArgb(125, 162, 206),
-					CornerColor = Color.FromArgb(174, 197, 224),
-					GradientStart = Color.FromArgb(220, 235, 252),
-					GradientEnd = Color.FromArgb(193, 219, 252)
+					BorderColor = Color.FromArgb(100, 125, 162, 206),
+					CornerColor = Color.FromArgb(100, 174, 197, 224),
+					GradientStart = Color.FromArgb(100, 220, 235, 252),
+					GradientEnd = Color.FromArgb(100, 193, 219, 252)
 				};
 				PaintHighlighted(g, cs);
 			}
@@ -134,10 +134,10 @@ namespace SizeExplorer.Controls
 			{
 				var cs = new ColorScheme
 				{
-					BorderColor = Color.FromArgb(217, 217, 217),
-					CornerColor = Color.FromArgb(239, 239, 239),
-					GradientStart = Color.FromArgb(248, 248, 248),
-					GradientEnd = Color.FromArgb(229, 229, 229)
+					BorderColor = Color.FromArgb(100, 217, 217, 217),
+					CornerColor = Color.FromArgb(100, 239, 239, 239),
+					GradientStart = Color.FromArgb(100, 248, 248, 248),
+					GradientEnd = Color.FromArgb(100, 229, 229, 229)
 				};
 				PaintHighlighted(g, cs);
 			}
@@ -145,10 +145,10 @@ namespace SizeExplorer.Controls
 			{
 				var cs = new ColorScheme
 				{
-					BorderColor = Color.FromArgb(184, 214, 251),
-					CornerColor = Color.FromArgb(214, 231, 252),
-					GradientStart = Color.FromArgb(250, 251, 253),
-					GradientEnd = Color.FromArgb(235, 243, 253)
+					BorderColor = Color.FromArgb(100, 184, 214, 251),
+					CornerColor = Color.FromArgb(100, 214, 231, 252),
+					GradientStart = Color.FromArgb(100, 250, 251, 253),
+					GradientEnd = Color.FromArgb(100, 235, 243, 253)
 				};
 				PaintHighlighted(g, cs);
 			}
