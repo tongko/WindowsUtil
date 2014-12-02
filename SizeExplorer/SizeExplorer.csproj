@@ -55,9 +55,12 @@
     <Compile Include="Core\PhysicalMedia.cs" />
     <Compile Include="Core\ReparsePoint.cs" />
     <Compile Include="Core\Win32Native.cs" />
+    <Compile Include="Core\FileSizeHelper.cs" />
     <Compile Include="Model\FileSystemInfo.cs" />
     <Compile Include="Model\FileSystemNode.cs" />
     <Compile Include="Model\InfoAnalyzer.cs" />
+    <Compile Include="Model\SizeNode.cs" />
+    <Compile Include="Model\SizeNodeCollection.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TreeViewHelper.cs" />

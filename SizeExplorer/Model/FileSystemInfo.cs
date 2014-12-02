@@ -10,12 +10,12 @@ namespace SizeExplorer.Model
 
 	public delegate void ExceptionHandler(Task task);
 
-	public class FileSystemInfo
+	public class FileSystemInfoX
 	{
 		private static readonly object SyncObject = new object();
 		private readonly IHandleThreadException _parent;
 
-		public FileSystemInfo(IHandleThreadException parent)
+		public FileSystemInfoX(IHandleThreadException parent)
 		{
 			_parent = parent;
 			Drives = new List<FileSystemNode>();

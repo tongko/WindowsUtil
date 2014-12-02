@@ -11,7 +11,7 @@ namespace SizeExplorer.UI
 	public partial class MainWnd : Form, IHandleThreadException
 	{
 		private bool _waiting;
-		private FileSystemInfo _fsi;
+		private FileSystemInfoX _fsi;
 
 		public MainWnd()
 		{
@@ -19,7 +19,7 @@ namespace SizeExplorer.UI
 			deviceView1.ItemMouseClick += ItemSelected;
 			_waiting = false;
 			ThreadExceptionHandlerCallback = HandleThreadException;
-			_fsi = new FileSystemInfo(this);
+			_fsi = new FileSystemInfoX(this);
 		}
 
 		/// <summary>
