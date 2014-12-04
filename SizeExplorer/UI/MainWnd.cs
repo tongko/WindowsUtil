@@ -11,7 +11,6 @@ namespace SizeExplorer.UI
 	public partial class MainWnd : Form, IHandleThreadException
 	{
 		private bool _waiting;
-		private FileSystemInfoX _fsi;
 
 		public MainWnd()
 		{
@@ -19,7 +18,6 @@ namespace SizeExplorer.UI
 			deviceView1.ItemMouseClick += ItemSelected;
 			_waiting = false;
 			ThreadExceptionHandlerCallback = HandleThreadException;
-			_fsi = new FileSystemInfoX(this);
 		}
 
 		/// <summary>
@@ -79,7 +77,7 @@ namespace SizeExplorer.UI
 
 			if (info is LogicalDrive)
 			{
-				_fsi.BeginAnalyze(info.Name);
+				//_fsi.BeginAnalyze(info.Name);
 			}
 
 			_waiting = true;

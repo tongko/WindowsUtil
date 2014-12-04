@@ -1,5 +1,7 @@
-﻿using SizeExplorer.Core;
+﻿using System.IO;
+using SizeExplorer.Core;
 using System;
+using SizeExplorer.Model;
 
 namespace Playground
 {
@@ -7,7 +9,9 @@ namespace Playground
 	{
 		static void Main(string[] args)
 		{
-			Console.WriteLine(60 / 64 + 1) ;
+			var node = new SizeNode(new DirectoryInfo("C:\\Program Files\\"));
+			Console.WriteLine(@"Calculating . . .");
+			FileSizeHelper.CalculateSize(node);
 
 			//var rp = new ReparsePoint(@"D:\Projects");
 			//Console.WriteLine("Target: {0}", rp.Target);
@@ -31,6 +35,7 @@ namespace Playground
 			//var ddi = new DiskDriveInfo();
 			//ddi.PopulateInfo(null);
 
+			Console.WriteLine("C:\\ is {0} bytes", node.Size);
 			Console.Write("Press any key to continue . . .");
 			Console.ReadKey(true);
 		}

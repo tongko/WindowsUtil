@@ -122,9 +122,15 @@ namespace SizeExplorer.Core
 			[Out, MarshalAs(UnmanagedType.U4)] out uint lpFileSizeHigh);
 
 		[DllImport("kernel32.dll", SetLastError = true, PreserveSig = true)]
-		public static extern int GetDiskFreeSpace([In, MarshalAs(UnmanagedType.LPWStr)] string lpRootPathName,
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool GetDiskFreeSpace(string lpRootPathName,
 			out uint lpSectorsPerCluster, out uint lpBytesPerSector, out uint lpNumberOfFreeClusters,
 			out uint lpTotalNumberOfClusters);
+
+		[DllImport("kernel32.dll", SetLastError = true, PreserveSig = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes,
+			out ulong lpTotalNumberOfFreeBytes);
 
 		#endregion
 	}
