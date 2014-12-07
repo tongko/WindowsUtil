@@ -1,6 +1,11 @@
-﻿using SizeExplorer.Controls;
+﻿using System.ComponentModel;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using SizeExplorer.Controls;
 using SizeExplorer.Core;
 using SizeExplorer.Model;
+using SizeExplorer.Properties;
 using SizeExplorer.UI.Resources;
 using System;
 using System.Drawing;
@@ -27,6 +32,11 @@ namespace SizeExplorer.UI
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
+
+			SuspendLayout();
+
+			Size = Settings.Default.Size;
+			Location = Settings.Default.Location;
 
 			deviceView1.SuspendLayout();
 
@@ -56,6 +66,7 @@ namespace SizeExplorer.UI
 			}
 
 			deviceView1.ResumeLayout(true);
+			ResumeLayout(true);
 		}
 
 		protected Image GetResourceImage(string name)
@@ -77,12 +88,22 @@ namespace SizeExplorer.UI
 
 			if (info is LogicalDrive)
 			{
-				//_fsi.BeginAnalyze(info.Name);
+				var fi = new DirectoryInfo(info.Name + "\\");
+				var node = new SizeNode(fi);
+
+				Task.Factory.StartNew(() => FileSizeHelper.BuildTree(node, UpdateViewItem))
+					.ContinueWith((task, o) =>
+					{
+						var n = o as ISizeNode;
+						if (n == null) return;
+
+						BindDirectoryView(n);
+					}, node);
 			}
 
 			_waiting = true;
-			animCircle.Visible = true;
-			animCircle.Start();
+//			animCircle.Visible = true;
+//			animCircle.Start();
 		}
 
 		private static string FormatBytes(ulong bytes)
@@ -104,11 +125,20 @@ namespace SizeExplorer.UI
 			base.OnActivated(e);
 			if (_waiting)
 			{
-				animCircle.Visible = true;
-				animCircle.Start();
+//				animCircle.Visible = true;
+//				animCircle.Start();
 			}
-			else
-				animCircle.Visible = false;
+//			else
+//				animCircle.Visible = false;
+		}
+
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			Settings.Default.Size = Size;
+			Settings.Default.Location = Location;
+			Settings.Default.Save();
+
+			base.OnClosing(e);
 		}
 
 		/// <summary>
@@ -118,7 +148,7 @@ namespace SizeExplorer.UI
 		protected override void OnDeactivate(EventArgs e)
 		{
 			base.OnDeactivate(e);
-			animCircle.Stop();
+//			animCircle.Stop();
 		}
 
 		/// <summary>
@@ -128,7 +158,7 @@ namespace SizeExplorer.UI
 		protected override void OnResizeBegin(EventArgs e)
 		{
 			base.OnResizeBegin(e);
-			animCircle.Stop();
+//			animCircle.Stop();
 		}
 
 		/// <summary>
@@ -138,13 +168,13 @@ namespace SizeExplorer.UI
 		protected override void OnResizeEnd(EventArgs e)
 		{
 			base.OnResizeEnd(e);
-			animCircle.Start();
+//			animCircle.Start();
 		}
 
 		private void PanelSizeChanged(object sender, EventArgs e)
 		{
-			animCircle.Left = panel1.Width / 2 - animCircle.Width / 2;
-			animCircle.Top = panel1.Height / 2 - animCircle.Height / 2;
+//			animCircle.Left = panel1.Width / 2 - animCircle.Width / 2;
+//			animCircle.Top = panel1.Height / 2 - animCircle.Height / 2;
 		}
 
 		private void HandleThreadException(object sender, Exception ex)
@@ -153,5 +183,33 @@ namespace SizeExplorer.UI
 		}
 
 		public ThreadExceptionHandler ThreadExceptionHandlerCallback { get; set; }
+
+
+		public void UpdateViewItem(ListViewItem item, ISizeNode node)
+		{
+			if (item == null) return;
+
+			if (directoryView1.InvokeRequired)
+			{
+				var d = new UpdateViewItemCallback(UpdateViewItem);
+				directoryView1.Invoke(d, new object[] { item, node });
+			}
+			else
+			{
+				item.SubItems["_colSize"].Text = CommonFunction.ConvertByte(node.Size);
+				item.SubItems["_colPercent"].Text = string.Format("{0:P}", node.Percentage);
+			}
+		}
+
+		private void BindDirectoryView(ISizeNode node)
+		{
+			if (directoryView1.InvokeRequired)
+				directoryView1.Invoke(new Action<ISizeNode>(BindDirectoryView), new object[] {node});
+			else
+			{
+				directoryView1.Clear();
+				directoryView1.Bind(node);
+			}
+		}
 	}
 }

@@ -32,10 +32,10 @@ namespace SizeExplorer.UI
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWnd));
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this.deviceView1 = new SizeExplorer.Controls.DeviceView();
 			this.panel1 = new System.Windows.Forms.Panel();
-			this.animCircle = new SizeExplorer.Controls.AnimatedCircle();
 			this.imglIcon = new System.Windows.Forms.ImageList(this.components);
+			this.deviceView1 = new SizeExplorer.Controls.DeviceView();
+			this.directoryView1 = new SizeExplorer.Controls.DirectoryView();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
@@ -61,6 +61,24 @@ namespace SizeExplorer.UI
 			this.splitContainer1.SplitterDistance = 320;
 			this.splitContainer1.TabIndex = 0;
 			// 
+			// panel1
+			// 
+			this.panel1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel1.BackgroundImage")));
+			this.panel1.Controls.Add(this.directoryView1);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(0, 0);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(448, 652);
+			this.panel1.TabIndex = 0;
+			this.panel1.SizeChanged += new System.EventHandler(this.PanelSizeChanged);
+			// 
+			// imglIcon
+			// 
+			this.imglIcon.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imglIcon.ImageStream")));
+			this.imglIcon.TransparentColor = System.Drawing.Color.Transparent;
+			this.imglIcon.Images.SetKeyName(0, "Folder.ico");
+			this.imglIcon.Images.SetKeyName(1, "File.ico");
+			// 
 			// deviceView1
 			// 
 			this.deviceView1.AutoScroll = true;
@@ -77,34 +95,14 @@ namespace SizeExplorer.UI
 			this.deviceView1.Size = new System.Drawing.Size(320, 652);
 			this.deviceView1.TabIndex = 0;
 			// 
-			// panel1
+			// directoryView1
 			// 
-			this.panel1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel1.BackgroundImage")));
-			this.panel1.Controls.Add(this.animCircle);
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(0, 0);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(448, 652);
-			this.panel1.TabIndex = 0;
-			this.panel1.SizeChanged += new System.EventHandler(this.PanelSizeChanged);
-			// 
-			// animCircle
-			// 
-			this.animCircle.BackColor = System.Drawing.Color.Transparent;
-			this.animCircle.DebugMode = false;
-			this.animCircle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(183)))), ((int)(((byte)(229)))));
-			this.animCircle.Location = new System.Drawing.Point(158, 225);
-			this.animCircle.Name = "animCircle";
-			this.animCircle.ShadowWidth = 0F;
-			this.animCircle.Size = new System.Drawing.Size(96, 96);
-			this.animCircle.TabIndex = 0;
-			// 
-			// imglIcon
-			// 
-			this.imglIcon.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imglIcon.ImageStream")));
-			this.imglIcon.TransparentColor = System.Drawing.Color.Transparent;
-			this.imglIcon.Images.SetKeyName(0, "Folder.ico");
-			this.imglIcon.Images.SetKeyName(1, "File.ico");
+			this.directoryView1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.directoryView1.Location = new System.Drawing.Point(0, 0);
+			this.directoryView1.Name = "directoryView1";
+			this.directoryView1.Size = new System.Drawing.Size(448, 652);
+			this.directoryView1.SizeNode = null;
+			this.directoryView1.TabIndex = 0;
 			// 
 			// MainWnd
 			// 
@@ -129,6 +127,6 @@ namespace SizeExplorer.UI
 		private System.Windows.Forms.ImageList imglIcon;
 		private Controls.DeviceView deviceView1;
 		private System.Windows.Forms.Panel panel1;
-		private Controls.AnimatedCircle animCircle;
+		private Controls.DirectoryView directoryView1;
 	}
 }

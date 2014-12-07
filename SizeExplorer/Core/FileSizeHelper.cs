@@ -1,16 +1,33 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
+using SizeExplorer.Controls;
 using SizeExplorer.Model;
 
 namespace SizeExplorer.Core
 {
 	public static class FileSizeHelper
 	{
-		public static void CalculateSize(SizeNode node)
+		public static void BuildTree(ISizeNode node, UpdateViewItemCallback callback)
+		{
+			var dirs = Directory.GetDirectories(node.Path);
+			foreach (var dNode in from dir in dirs where !IsHardLink(dir) select new SizeNode(new DirectoryInfo(dir)))
+			{
+				node.UpdateCallback = callback;
+				AddChildNode(node, dNode);
+			}
+
+			foreach (var child in node.Children)
+			{
+				BuildTree(child, callback);
+			}
+		}
+
+		public static void CalculateSize(ISizeNode node)
 		{
 			var dirs = Directory.GetDirectories(node.Path).ToArray();
 			Parallel.For(0, dirs.Length, (i, state) =>
@@ -22,15 +39,6 @@ namespace SizeExplorer.Core
 				CalculateSize(dNode);
 				node.AddSize(dNode.Size);
 			});
-			//for (var i = 0; i < dirs.Length; i++)
-			//{
-			//	var dir = dirs[i];
-			//	if (IsHardLink(dir)) continue;
-
-			//	var dNode = new SizeNode(new DirectoryInfo(dir));
-			//	CalculateSize(dNode);
-			//	node.AddSize(dNode.Size);
-			//}
 
 			var files = Directory.GetFiles(node.Path).ToArray();
 			for (var i = 0; i < files.Length; i++)
@@ -43,11 +51,10 @@ namespace SizeExplorer.Core
 			}
 		}
 
-		public static void AddChildNode(SizeNode parent, SizeNode child)
+		public static void AddChildNode(ISizeNode parent, ISizeNode child)
 		{
 			parent.Children.Add(child);
 			child.Parent = parent;
-			parent.AddSize(child.Size);
 		}
 
 		/// <summary>
