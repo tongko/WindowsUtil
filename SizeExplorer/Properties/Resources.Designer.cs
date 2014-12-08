@@ -59,5 +59,32 @@ namespace SizeExplorer.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Empty path not supported..
+        /// </summary>
+        internal static string InvalidPathEmpty {
+            get {
+                return ResourceManager.GetString("InvalidPathEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is network path..
+        /// </summary>
+        internal static string InvalidPathNetwork {
+            get {
+                return ResourceManager.GetString("InvalidPathNetwork", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must be an absolute path..
+        /// </summary>
+        internal static string InvalidPathNotAbsolute {
+            get {
+                return ResourceManager.GetString("InvalidPathNotAbsolute", resourceCulture);
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
-﻿using System.IO;
+﻿using Delimon.Win32.IO;
 using SizeExplorer.Core;
-using System;
 using SizeExplorer.Model;
+using System;
 
 namespace Playground
 {
@@ -9,8 +9,12 @@ namespace Playground
 	{
 		static void Main(string[] args)
 		{
-			var node = new SizeNode(new DirectoryInfo("C:\\Program Files\\"));
+			const string FilePath = @"E:\Users\tliew\AppData\Local\Microsoft\Windows Store\Cache\0";
+			//var fi = new FileInfo(FilePath);
+
+			var node = new SizeNode(new DirectoryInfo(FilePath));
 			Console.WriteLine(@"Calculating . . .");
+			FileSizeHelper.BuildTree(node, null);
 			FileSizeHelper.CalculateSize(node);
 
 			//var rp = new ReparsePoint(@"D:\Projects");
@@ -35,7 +39,7 @@ namespace Playground
 			//var ddi = new DiskDriveInfo();
 			//ddi.PopulateInfo(null);
 
-			Console.WriteLine("C:\\ is {0} bytes", node.Size);
+			//Console.WriteLine("C:\\ is {0} bytes", node.Size);
 			Console.Write("Press any key to continue . . .");
 			Console.ReadKey(true);
 		}

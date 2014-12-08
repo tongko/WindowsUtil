@@ -68,22 +68,30 @@ namespace SizeExplorer.Controls
 		{
 			if (!_init) return;
 
-			var g = Graphics.FromImage(_bitmap);
-			g.Clear(Color.Transparent);
-			g.SmoothingMode = SmoothingMode.HighQuality;
-			var r = (Width / 2f) / 2f;
+			if (DesignMode)
+			{
+				var pen = new Pen(ForeColor, 2.5f);
+				e.Graphics.DrawRectangle(pen, ClientRectangle);
+			}
+			else
+			{
+				var g = Graphics.FromImage(_bitmap);
+				g.Clear(Color.Transparent);
+				g.SmoothingMode = SmoothingMode.HighQuality;
+				var r = (Width / 2f) / 2f;
 
-			_rcShadowOuter = new RectangleF(
-				_center.X - r - ShadowWidth - 1,
-				_center.Y - r - ShadowWidth - 1,
-				(r + 1 + ShadowWidth) * 2,
-				(r + 1 + ShadowWidth) * 2);
+				_rcShadowOuter = new RectangleF(
+					_center.X - r - ShadowWidth - 1,
+					_center.Y - r - ShadowWidth - 1,
+					(r + 1 + ShadowWidth) * 2,
+					(r + 1 + ShadowWidth) * 2);
 
-			DrawShadow(g);
-			DrawCircle(g);
-			g.Dispose();
+				DrawShadow(g);
+				DrawCircle(g);
+				g.Dispose();
 
-			e.Graphics.DrawImage(_bitmap, ClientRectangle, ClientRectangle, GraphicsUnit.Pixel);
+				e.Graphics.DrawImage(_bitmap, ClientRectangle, ClientRectangle, GraphicsUnit.Pixel);
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -24,5 +24,7 @@ namespace SizeExplorer.Controls
 		ListViewItem BindItem { get; set; }
 
 		UpdateViewItemCallback UpdateCallback { get; set; }
+
+		bool IsFile { get; set; }
 	}
 }

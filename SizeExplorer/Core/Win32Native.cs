@@ -117,11 +117,10 @@ namespace SizeExplorer.Core
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool CloseHandle(IntPtr hObject);
 
-		[DllImport("kernel32.dll")]
-		public static extern uint GetCompressedFileSize([In, MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
-			[Out, MarshalAs(UnmanagedType.U4)] out uint lpFileSizeHigh);
+		[DllImport("kernel32.dll", SetLastError = true, PreserveSig = true, CharSet = CharSet.Unicode)]
+		public static extern uint GetCompressedFileSize(string lpFileName, out uint lpFileSizeHigh);
 
-		[DllImport("kernel32.dll", SetLastError = true, PreserveSig = true)]
+		[DllImport("kernel32.dll", SetLastError = true, PreserveSig = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool GetDiskFreeSpace(string lpRootPathName,
 			out uint lpSectorsPerCluster, out uint lpBytesPerSector, out uint lpNumberOfFreeClusters,

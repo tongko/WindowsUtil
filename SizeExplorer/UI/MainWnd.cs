@@ -1,27 +1,24 @@
-﻿using System.ComponentModel;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+using Delimon.Win32.IO;
 using SizeExplorer.Controls;
 using SizeExplorer.Core;
 using SizeExplorer.Model;
 using SizeExplorer.Properties;
 using SizeExplorer.UI.Resources;
 using System;
+using System.ComponentModel;
 using System.Drawing;
+using System.Speech.Synthesis;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SizeExplorer.UI
 {
 	public partial class MainWnd : Form, IHandleThreadException
 	{
-		private bool _waiting;
-
 		public MainWnd()
 		{
 			InitializeComponent();
 			deviceView1.ItemMouseClick += ItemSelected;
-			_waiting = false;
 			ThreadExceptionHandlerCallback = HandleThreadException;
 		}
 
@@ -67,6 +64,10 @@ namespace SizeExplorer.UI
 
 			deviceView1.ResumeLayout(true);
 			ResumeLayout(true);
+
+			var speech = new SpeechSynthesizer();
+			speech.SetOutputToDefaultAudioDevice();
+			speech.SpeakAsync("Complete loading Size Explorer User Interface.");
 		}
 
 		protected Image GetResourceImage(string name)
@@ -88,22 +89,45 @@ namespace SizeExplorer.UI
 
 			if (info is LogicalDrive)
 			{
-				var fi = new DirectoryInfo(info.Name + "\\");
-				var node = new SizeNode(fi);
+				if (SizeExplorerRuntime.SizeNodes.ContainsKey(info.Name))
+				{
+					directoryView1.SetState(true);
+					var n = SizeExplorerRuntime.SizeNodes[info.Name];
+					if (n == null) return;
 
-				Task.Factory.StartNew(() => FileSizeHelper.BuildTree(node, UpdateViewItem))
-					.ContinueWith((task, o) =>
+					BindDirectoryView(n);
+					directoryView1.SetState(false);
+				}
+				else
+				{
+					var fi = new DirectoryInfo(info.Name + "\\");
+					var node = new SizeNode(fi);
+
+					Task.Factory.StartNew(() =>
 					{
-						var n = o as ISizeNode;
-						if (n == null) return;
+						directoryView1.SetState(true);
+						FileSizeHelper.BuildTreeAtRoot(node, AddViewItem, UpdateViewItem);
+					})
+						.ContinueWith((task, o) =>
+						{
+							var n = o as ISizeNode;
+							if (n == null) return;
 
-						BindDirectoryView(n);
-					}, node);
+							BindDirectoryView(n);
+							SizeExplorerRuntime.SizeNodes.Add(info.Name, n);
+							directoryView1.SetState(false);
+						}, node)
+						.ContinueWith((task, o) =>
+						{
+							var n = o as ISizeNode;
+							if (n == null) return;
+
+							directoryView1.SetState(true);
+							FileSizeHelper.CalculateSize(n);
+							directoryView1.SetState(false);
+						}, node);
+				}
 			}
-
-			_waiting = true;
-//			animCircle.Visible = true;
-//			animCircle.Start();
 		}
 
 		private static string FormatBytes(ulong bytes)
@@ -116,22 +140,6 @@ namespace SizeExplorer.UI
 			return String.Format("{0:0.#} {1}", dblSByte, suffix[i]);
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Form.Activated"/> event.
-		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
-		protected override void OnActivated(EventArgs e)
-		{
-			base.OnActivated(e);
-			if (_waiting)
-			{
-//				animCircle.Visible = true;
-//				animCircle.Start();
-			}
-//			else
-//				animCircle.Visible = false;
-		}
-
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			Settings.Default.Size = Size;
@@ -141,45 +149,9 @@ namespace SizeExplorer.UI
 			base.OnClosing(e);
 		}
 
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Form.Deactivate"/> event.
-		/// </summary>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> that contains the event data. </param>
-		protected override void OnDeactivate(EventArgs e)
+		private static void HandleThreadException(object sender, Exception ex)
 		{
-			base.OnDeactivate(e);
-//			animCircle.Stop();
-		}
-
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Form.ResizeBegin"/> event.
-		/// </summary>
-		/// <param name="e">A <see cref="T:System.EventArgs"/> that contains the event data. </param>
-		protected override void OnResizeBegin(EventArgs e)
-		{
-			base.OnResizeBegin(e);
-//			animCircle.Stop();
-		}
-
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Form.ResizeEnd"/> event.
-		/// </summary>
-		/// <param name="e">A <see cref="T:System.EventArgs"/> that contains the event data. </param>
-		protected override void OnResizeEnd(EventArgs e)
-		{
-			base.OnResizeEnd(e);
-//			animCircle.Start();
-		}
-
-		private void PanelSizeChanged(object sender, EventArgs e)
-		{
-//			animCircle.Left = panel1.Width / 2 - animCircle.Width / 2;
-//			animCircle.Top = panel1.Height / 2 - animCircle.Height / 2;
-		}
-
-		private void HandleThreadException(object sender, Exception ex)
-		{
-			MessageBox.Show("Error occurs" + ex, "Error in Thread", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			MessageBox.Show("Error occurs " + ex, "Error in Thread", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
 
 		public ThreadExceptionHandler ThreadExceptionHandlerCallback { get; set; }
@@ -196,19 +168,49 @@ namespace SizeExplorer.UI
 			}
 			else
 			{
-				item.SubItems["_colSize"].Text = CommonFunction.ConvertByte(node.Size);
-				item.SubItems["_colPercent"].Text = string.Format("{0:P}", node.Percentage);
+				item.SubItems[1].Text = CommonFunction.ConvertByte(node.Size);
+				item.SubItems[2].Text = string.Format("{0:0.00}", node.Percentage);
+				if (node.Percentage > 50)
+				{
+					item.Font = new Font(item.Font, FontStyle.Bold | FontStyle.Underline);
+					item.ForeColor = Color.Red;
+				}
+				else if (node.Percentage > 30)
+				{
+					item.Font = new Font(item.Font, FontStyle.Bold | FontStyle.Underline);
+					item.ForeColor = Color.LightBlue;
+				}
+				else if (node.Percentage > 20)
+				{
+					item.Font = new Font(item.Font, FontStyle.Bold | FontStyle.Underline);
+					item.ForeColor = Color.GreenYellow;
+				}
+				else
+				{
+					item.Font = directoryView1.Font;
+					item.ForeColor = Color.FromArgb(224, 224, 224);
+				}
 			}
 		}
 
 		private void BindDirectoryView(ISizeNode node)
 		{
 			if (directoryView1.InvokeRequired)
-				directoryView1.Invoke(new Action<ISizeNode>(BindDirectoryView), new object[] {node});
+				directoryView1.Invoke(new Action<ISizeNode>(BindDirectoryView), new object[] { node });
 			else
 			{
 				directoryView1.Clear();
 				directoryView1.Bind(node);
+			}
+		}
+
+		private void AddViewItem(ListViewItem dummy, ISizeNode node)
+		{
+			if (directoryView1.InvokeRequired)
+				directoryView1.Invoke(new Action<ListViewItem, ISizeNode>(AddViewItem), new object[] { dummy, node });
+			else
+			{
+				directoryView1.BindChild(node);
 			}
 		}
 	}

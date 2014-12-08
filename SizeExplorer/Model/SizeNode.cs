@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Windows.Forms;
+﻿using Delimon.Win32.IO;
 using SizeExplorer.Controls;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace SizeExplorer.Model
 {
+	[DebuggerDisplay("Name = {Name}")]
 	public class SizeNode : ISizeNode
 	{
 		private static readonly object SyncObject = new object();
@@ -36,6 +38,8 @@ namespace SizeExplorer.Model
 			get { return _info.Name; }
 		}
 
+		public bool IsFile { get; set; }
+
 		public ISizeNode Parent { get; set; }
 
 		public List<ISizeNode> Children { get; set; }
@@ -47,7 +51,7 @@ namespace SizeExplorer.Model
 			get
 			{
 				if (Parent.Size == 0) return 0;
-				return Size / (double) Parent.Size * 100.00;
+				return Size / (double)Parent.Size * 100.00;
 			}
 		}
 
@@ -82,7 +86,7 @@ namespace SizeExplorer.Model
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != typeof (SizeNode)) return false;
+			if (obj.GetType() != typeof(SizeNode)) return false;
 			return Equals(obj as SizeNode);
 		}
 	}
