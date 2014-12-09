@@ -1,16 +1,15 @@
-﻿using System.Collections;
-using System.Diagnostics;
-using Delimon.Win32.IO;
-using SizeExplorer.Controls;
-using SizeExplorer.FileSystem;
-using SizeExplorer.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Delimon.Win32.IO;
+using SizeExplorer.Controls;
+using SizeExplorer.FileSystem;
+using SizeExplorer.Model;
 using FileAccess = System.IO.FileAccess;
 using FileMode = System.IO.FileMode;
 using FileShare = System.IO.FileShare;
@@ -19,6 +18,16 @@ namespace SizeExplorer.Core
 {
 	public static class FileSizeHelper
 	{
+		private static readonly object SyncObject = new object();
+
+		#region Public Methods
+
+		public static void AddChildNode(ISizeNode parent, ISizeNode child)
+		{
+			parent.Children.Add(child);
+			child.Parent = parent;
+		}
+
 		public static ulong Build(ISizeNode node)
 		{
 			ulong fsoCount = 1;
@@ -62,6 +71,25 @@ namespace SizeExplorer.Core
 			return fsoCount;
 		}
 
+		public static void BuildTree(ISizeNode node, UpdateViewItemCallback callback)
+		{
+			var dirs = Directory.GetDirectories(node.Path);
+			foreach (var dNode in from dir in dirs where !IsHardLink(dir) select new SizeNode(new DirectoryInfo(dir)))
+			{
+				node.UpdateCallback = callback;
+				AddChildNode(node, dNode);
+				BuildTree(dNode, callback);
+			}
+
+			var files = Directory.GetFiles(node.Path);
+			foreach (var fNode in from file in files where !IsHardLink(file) select new SizeNode(new FileInfo(file)))
+			{
+				fNode.UpdateCallback = callback;
+				fNode.IsFile = true;
+				AddChildNode(node, fNode);
+			}
+		}
+
 		public static void BuildTreeAtRoot(ISizeNode node, UpdateViewItemCallback addCallback, UpdateViewItemCallback updateCallback)
 		{
 			var dirs = Directory.GetDirectories(node.Path);
@@ -83,25 +111,6 @@ namespace SizeExplorer.Core
 			foreach (var fNode in from file in files where !IsHardLink(file) select new SizeNode(new FileInfo(file)))
 			{
 				fNode.UpdateCallback = updateCallback;
-				fNode.IsFile = true;
-				AddChildNode(node, fNode);
-			}
-		}
-
-		public static void BuildTree(ISizeNode node, UpdateViewItemCallback callback)
-		{
-			var dirs = Directory.GetDirectories(node.Path);
-			foreach (var dNode in from dir in dirs where !IsHardLink(dir) select new SizeNode(new DirectoryInfo(dir)))
-			{
-				node.UpdateCallback = callback;
-				AddChildNode(node, dNode);
-				BuildTree(dNode, callback);
-			}
-
-			var files = Directory.GetFiles(node.Path);
-			foreach (var fNode in from file in files where !IsHardLink(file) select new SizeNode(new FileInfo(file)))
-			{
-				fNode.UpdateCallback = callback;
 				fNode.IsFile = true;
 				AddChildNode(node, fNode);
 			}
@@ -169,10 +178,39 @@ namespace SizeExplorer.Core
 			}
 		}
 
-		public static void AddChildNode(ISizeNode parent, ISizeNode child)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool FileSystemExists(string path)
 		{
-			parent.Children.Add(child);
-			child.Parent = parent;
+			return (Directory.Exists(path) || File.Exists(path));
+		}
+
+		public static void GetDiskSpaceInfo(string root, out uint sectorsPerCluster, out uint bytesPerSector)
+		{
+			var info = SizeExplorerRuntime.DiskSizeInfo.FirstOrDefault(i => i.Root.Equals(root));
+			if (info.Equals(DiskSizeInfoCache.Empty))
+			{
+				lock (SyncObject)
+				{
+					if (info.Equals(DiskSizeInfoCache.Empty))
+					{
+						uint dummy;
+						if (!Win32Native.GetDiskFreeSpace(root, out sectorsPerCluster, out bytesPerSector, out dummy, out dummy))
+							throw new Win32Exception(Marshal.GetLastWin32Error());
+
+						SizeExplorerRuntime.DiskSizeInfo.Add(new DiskSizeInfoCache
+						{
+							Root = root,
+							BytesPerSector = bytesPerSector,
+							SectorsPerCluster = sectorsPerCluster
+						});
+
+						return;
+					}
+				}
+			}
+
+			sectorsPerCluster = info.SectorsPerCluster;
+			bytesPerSector = info.BytesPerSector;
 		}
 
 		/// <summary>
@@ -213,36 +251,6 @@ namespace SizeExplorer.Core
 
 			var size = (ulong)hosize << 32 | losize;
 			return ((size + clusterSize - 1) / clusterSize) * clusterSize;
-		}
-
-		private static readonly object SyncObject = new object();
-		public static void GetDiskSpaceInfo(string root, out uint sectorsPerCluster, out uint bytesPerSector)
-		{
-			var info = SizeExplorerRuntime.DiskSizeInfo.FirstOrDefault(i => i.Root.Equals(root));
-			if (info.Equals(DiskSizeInfoCache.Empty))
-			{
-				lock (SyncObject)
-				{
-					if (info.Equals(DiskSizeInfoCache.Empty))
-					{
-						uint dummy;
-						if (!Win32Native.GetDiskFreeSpace(root, out sectorsPerCluster, out bytesPerSector, out dummy, out dummy))
-							throw new Win32Exception(Marshal.GetLastWin32Error());
-
-						SizeExplorerRuntime.DiskSizeInfo.Add(new DiskSizeInfoCache
-						{
-							Root = root,
-							BytesPerSector = bytesPerSector,
-							SectorsPerCluster = sectorsPerCluster
-						});
-
-						return;
-					}
-				}
-			}
-
-			sectorsPerCluster = info.SectorsPerCluster;
-			bytesPerSector = info.BytesPerSector;
 		}
 
 		/// <summary>
@@ -308,10 +316,6 @@ namespace SizeExplorer.Core
 			return num1;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool FileSystemExists(string path)
-		{
-			return (Directory.Exists(path) || File.Exists(path));
-		}
+		#endregion
 	}
 }
