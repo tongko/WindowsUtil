@@ -27,7 +27,7 @@ namespace SizeExplorer.Core
 		private void NodeDoneCallback(ISizeNode node)
 		{
 			_progress++;
-			var p = ((int)(_progress / _fsoCount)) * 100;
+			int p = (int)(((float)_progress / (float)_fsoCount) * 100);
 			ReportProgressAction(p, node.Path);
 		}
 	}

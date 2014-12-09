@@ -64,6 +64,7 @@ namespace SizeExplorer.UI
 
 			deviceView1.ResumeLayout(true);
 			ResumeLayout(true);
+			ReportProgress(0, "Ready");
 
 			var speech = new SpeechSynthesizer();
 			speech.SetOutputToDefaultAudioDevice();
@@ -107,28 +108,22 @@ namespace SizeExplorer.UI
 
 					Task.Factory.StartNew(() =>
 					{
-						directoryView1.SetState(true);
+						ReportProgress(0, "Analyzing file system hierarchy...");
+						//directoryView1.SetState(true);
 						fsoCount = FileSizeHelper.Build(node);
+						BindDirectoryView(node);
+						SizeExplorerRuntime.SizeNodes.Add(node.Name, node);
+						ReportProgress(0, "All done.");
 					})
 						.ContinueWith((task, o) =>
 						{
 							var n = o as ISizeNode;
 							if (n == null) return;
 
-							BindDirectoryView(n);
-							SizeExplorerRuntime.SizeNodes.Add(info.Name, n);
-							directoryView1.SetState(false);
-						}, node)
-						.ContinueWith((task, o) =>
-						{
-							var n = o as ISizeNode;
-							if (n == null) return;
-
-							directoryView1.SetState(true);
+							//directoryView1.SetState(true);
 							var job = new CalculateJob(n, ReportProgress, fsoCount);
 							job.StartJob();
-							//FileSizeHelper.CalculateSize(n);
-							directoryView1.SetState(false);
+							//directoryView1.SetState(false);
 						}, node);
 				}
 			}
@@ -174,17 +169,17 @@ namespace SizeExplorer.UI
 			{
 				item.SubItems[1].Text = CommonFunction.ConvertByte(node.Size);
 				item.SubItems[2].Text = string.Format("{0:0.00}", node.Percentage);
-				if (node.Percentage > 50)
+				if (node.Percentage > 30)
 				{
 					item.Font = new Font(item.Font, FontStyle.Bold | FontStyle.Underline);
 					item.ForeColor = Color.Red;
 				}
-				else if (node.Percentage > 30)
+				else if (node.Percentage > 20)
 				{
 					item.Font = new Font(item.Font, FontStyle.Bold | FontStyle.Underline);
 					item.ForeColor = Color.LightBlue;
 				}
-				else if (node.Percentage > 20)
+				else if (node.Percentage > 10)
 				{
 					item.Font = new Font(item.Font, FontStyle.Bold | FontStyle.Underline);
 					item.ForeColor = Color.GreenYellow;
@@ -208,16 +203,16 @@ namespace SizeExplorer.UI
 			}
 		}
 
-		private void AddViewItem(ListViewItem dummy, ISizeNode node)
-		{
-			if (directoryView1.InvokeRequired)
-				directoryView1.Invoke(new Action<ListViewItem, ISizeNode>(AddViewItem), new object[] { dummy, node });
-			else
-			{
-				directoryView1.BindChild(node);
-				directoryView1.Invalidate();
-			}
-		}
+		//private void AddViewItem(ListViewItem dummy, ISizeNode node)
+		//{
+		//	if (directoryView1.InvokeRequired)
+		//		directoryView1.Invoke(new Action<ListViewItem, ISizeNode>(AddViewItem), new object[] { dummy, node });
+		//	else
+		//	{
+		//		directoryView1.BindChild(node);
+		//		directoryView1.Invalidate();
+		//	}
+		//}
 
 		private void ReportProgress(int progress, string description)
 		{
@@ -225,8 +220,18 @@ namespace SizeExplorer.UI
 				statusStrip1.Invoke(new Action<int, string>(ReportProgress), new object[] { progress, description });
 			else
 			{
+				if (progress > 100) progress = 100;
 				tsProgress.Value = progress;
-				statusLabel.Text = "Completed " + description;
+				if (progress == 0)
+				{
+					//tsProgress.Visible = false;
+					statusLabel.Text = description;
+				}
+				else
+				{
+					//tsProgress.Visible = true;
+					statusLabel.Text = @"Completed " + description;
+				}
 			}
 		}
 	}
