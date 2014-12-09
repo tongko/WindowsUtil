@@ -87,6 +87,8 @@ namespace SizeExplorer.UI
 			var info = e.Item.UserData as InfoBase;
 			if (info == null || info.Properties == null) return;
 
+			ulong fsoCount = 0;
+
 			if (info is LogicalDrive)
 			{
 				if (SizeExplorerRuntime.SizeNodes.ContainsKey(info.Name))
@@ -106,7 +108,7 @@ namespace SizeExplorer.UI
 					Task.Factory.StartNew(() =>
 					{
 						directoryView1.SetState(true);
-						FileSizeHelper.BuildTreeAtRoot(node, AddViewItem, UpdateViewItem);
+						fsoCount = FileSizeHelper.Build(node);
 					})
 						.ContinueWith((task, o) =>
 						{
@@ -123,7 +125,9 @@ namespace SizeExplorer.UI
 							if (n == null) return;
 
 							directoryView1.SetState(true);
-							FileSizeHelper.CalculateSize(n);
+							var job = new CalculateJob(n, ReportProgress, fsoCount);
+							job.StartJob();
+							//FileSizeHelper.CalculateSize(n);
 							directoryView1.SetState(false);
 						}, node);
 				}
@@ -211,6 +215,18 @@ namespace SizeExplorer.UI
 			else
 			{
 				directoryView1.BindChild(node);
+				directoryView1.Invalidate();
+			}
+		}
+
+		private void ReportProgress(int progress, string description)
+		{
+			if (statusStrip1.InvokeRequired)
+				statusStrip1.Invoke(new Action<int, string>(ReportProgress), new object[] { progress, description });
+			else
+			{
+				tsProgress.Value = progress;
+				statusLabel.Text = "Completed " + description;
 			}
 		}
 	}

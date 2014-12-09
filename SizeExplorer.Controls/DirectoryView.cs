@@ -6,6 +6,8 @@ namespace SizeExplorer.Controls
 {
 	public delegate void UpdateViewItemCallback(ListViewItem item, ISizeNode node);
 
+	public delegate void BindNodeCallback(object sender, ISizeNode node);
+
 	public partial class DirectoryView : UserControl
 	{
 		private const int MinWidth = 430;

@@ -5,26 +5,35 @@ namespace SizeExplorer.Controls
 {
 	public interface ISizeNode
 	{
-		string Path { get; }
+		#region Properties
+
+		ListViewItem BindItem { get; set; }
+
+		List<ISizeNode> Children { get; set; }
+
+		bool IsFile { get; set; }
 
 		string Name { get; }
 
 		ISizeNode Parent { get; set; }
 
-		List<ISizeNode> Children { get; set; }
-
-		ulong Size { get; }
+		string Path { get; }
 
 		double Percentage { get; }
 
+		ulong Size { get; }
+
 		object SyncRoot { get; }
-
-		void AddSize(ulong size);
-
-		ListViewItem BindItem { get; set; }
 
 		UpdateViewItemCallback UpdateCallback { get; set; }
 
-		bool IsFile { get; set; }
+		#endregion
+
+
+		#region Public Methods
+
+		void AddSize(ulong size);
+
+		#endregion
 	}
 }

@@ -101,10 +101,10 @@
 			this.animCircle.BackColor = System.Drawing.Color.Transparent;
 			this.animCircle.DebugMode = false;
 			this.animCircle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(183)))), ((int)(((byte)(229)))));
-			this.animCircle.Location = new System.Drawing.Point(385, 409);
+			this.animCircle.Location = new System.Drawing.Point(363, 389);
 			this.animCircle.Name = "animCircle";
 			this.animCircle.ShadowWidth = 0F;
-			this.animCircle.Size = new System.Drawing.Size(100, 100);
+			this.animCircle.Size = new System.Drawing.Size(88, 88);
 			this.animCircle.TabIndex = 1;
 			this.animCircle.Visible = false;
 			// 

@@ -10,11 +10,18 @@ namespace SizeExplorer.Model
 	public class SizeNode : ISizeNode
 	{
 		private static readonly object SyncObject = new object();
-		private readonly FileSystemInfo _info;
+		private readonly string _fullPath;
+		private readonly string _name;
 
 		public SizeNode(FileSystemInfo info)
+			: this(info.FullName, info.Name)
 		{
-			_info = info;
+		}
+
+		public SizeNode(string fullPath, string name)
+		{
+			_fullPath = fullPath;
+			_name = name;
 			Size = 0;
 			Children = new List<ISizeNode>();
 		}
@@ -30,12 +37,12 @@ namespace SizeExplorer.Model
 
 		public string Path
 		{
-			get { return _info.FullName; }
+			get { return _fullPath; }
 		}
 
 		public string Name
 		{
-			get { return _info.Name; }
+			get { return _name; }
 		}
 
 		public bool IsFile { get; set; }
@@ -67,19 +74,12 @@ namespace SizeExplorer.Model
 
 		public override int GetHashCode()
 		{
-			unchecked
-			{
-				int hashCode = (_info != null ? _info.GetHashCode() : 0);
-				hashCode = (hashCode * 397) ^ (Parent != null ? Parent.GetHashCode() : 0);
-				hashCode = (hashCode * 397) ^ (Children != null ? Children.GetHashCode() : 0);
-				hashCode = (hashCode * 397) ^ Size.GetHashCode();
-				return hashCode;
-			}
+			return _fullPath.GetHashCode();
 		}
 
 		protected virtual bool Equals(SizeNode node)
 		{
-			return Equals(_info, node._info);
+			return Equals(_fullPath, node._fullPath);
 		}
 
 		public override bool Equals(object obj)

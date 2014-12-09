@@ -38,6 +38,7 @@ namespace SizeExplorer.UI
 			this.imglIcon = new System.Windows.Forms.ImageList(this.components);
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+			this.tsProgress = new System.Windows.Forms.ToolStripProgressBar();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
@@ -93,6 +94,7 @@ namespace SizeExplorer.UI
 			// directoryView1
 			// 
 			this.directoryView1.BackColor = System.Drawing.Color.White;
+			this.directoryView1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("directoryView1.BackgroundImage")));
 			this.directoryView1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.directoryView1.Location = new System.Drawing.Point(0, 0);
 			this.directoryView1.Name = "directoryView1";
@@ -109,7 +111,8 @@ namespace SizeExplorer.UI
 			// statusStrip1
 			// 
 			this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel});
+            this.statusLabel,
+            this.tsProgress});
 			this.statusStrip1.Location = new System.Drawing.Point(0, 624);
 			this.statusStrip1.Name = "statusStrip1";
 			this.statusStrip1.Size = new System.Drawing.Size(772, 22);
@@ -119,9 +122,16 @@ namespace SizeExplorer.UI
 			// statusLabel
 			// 
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(757, 17);
+			this.statusLabel.Size = new System.Drawing.Size(624, 17);
 			this.statusLabel.Spring = true;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// tsProgress
+			// 
+			this.tsProgress.Name = "tsProgress";
+			this.tsProgress.Size = new System.Drawing.Size(100, 16);
+			this.tsProgress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+			this.tsProgress.ToolTipText = "Calculate Size Progress";
 			// 
 			// MainWnd
 			// 
@@ -153,5 +163,6 @@ namespace SizeExplorer.UI
 		private Controls.DirectoryView directoryView1;
 		private System.Windows.Forms.StatusStrip statusStrip1;
 		private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+		private System.Windows.Forms.ToolStripProgressBar tsProgress;
 	}
 }

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 namespace SizeExplorer.Core
 {
 	// ReSharper disable InconsistentNaming
-	internal static class Win32Native
+	public static class Win32Native
 	{
 		#region Constants
 
@@ -21,6 +23,10 @@ namespace SizeExplorer.Core
 		public const int MAXIMUM_REPARSE_DATA_BUFFER_SIZE = 16 * 1024;
 		public const uint TOKEN_ADJUST_PRIVILEGES = 0x0020;
 		public const int FSCTL_GET_REPARSE_POINT = 42;
+
+		public const int ERROR_NO_MORE_FILES = 18;
+
+		public static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
 
 		#endregion
 
@@ -62,6 +68,23 @@ namespace SizeExplorer.Core
 			public LUID_AND_ATTRIBUTES[] Privileges;
 		}
 
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+		public struct WIN32_FIND_DATA
+		{
+			public uint dwFileAttributes;
+			public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
+			public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
+			public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
+			public uint nFileSizeHigh;
+			public uint nFileSizeLow;
+			public uint dwReserved0;
+			public uint dwReserved1;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+			public string cFileName;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
+			public string cAlternateFileName;
+		}
+
 		#endregion
 
 
@@ -70,7 +93,7 @@ namespace SizeExplorer.Core
 		[DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Auto)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool DeviceIoControl(
-			IntPtr hDevice,
+			SafeFileHandle hDevice,
 			uint dwIoControlCode,
 			IntPtr lpInBuffer,
 			uint nInBufferSize,
@@ -81,7 +104,7 @@ namespace SizeExplorer.Core
 			IntPtr lpOverlapped);
 
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-		public static extern IntPtr CreateFile(
+		public static extern SafeFileHandle CreateFile(
 			string fileName,
 			[MarshalAs(UnmanagedType.U4)] FileAccess fileAccess,
 			[MarshalAs(UnmanagedType.U4)] FileShare fileShare,
@@ -126,10 +149,11 @@ namespace SizeExplorer.Core
 			out uint lpSectorsPerCluster, out uint lpBytesPerSector, out uint lpNumberOfFreeClusters,
 			out uint lpTotalNumberOfClusters);
 
-		[DllImport("kernel32.dll", SetLastError = true, PreserveSig = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes,
-			out ulong lpTotalNumberOfFreeBytes);
+		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+		public static extern SafeFindHandle FindFirstFile(string lpFileName, out WIN32_FIND_DATA lpFindFileData);
+
+		[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+		public static extern bool FindNextFile(SafeFindHandle hFindFile, out WIN32_FIND_DATA lpFindFileData);
 
 		#endregion
 	}

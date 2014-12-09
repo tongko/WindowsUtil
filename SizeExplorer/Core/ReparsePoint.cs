@@ -54,7 +54,7 @@ namespace SizeExplorer.Core
 			// Open the file and get its handle
 			var handle = Win32Native.CreateFile(path, FileAccess.Read, FileShare.None, 0, FileMode.Open,
 				Win32Native.FILE_FLAG_OPEN_REPARSE_POINT | Win32Native.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero);
-			if (handle.ToInt32() < 0) return;
+			if (handle.IsInvalid) return;
 
 			Win32Native.REPARSE_DATA_BUFFER buffer;
 			// Make up the control code - see CTL_CODE on ntddk.h
@@ -139,7 +139,7 @@ namespace SizeExplorer.Core
 					_normalisedTarget = _normalisedTarget.Substring(0, _normalisedTarget.Length - 1);
 			}
 
-			Win32Native.CloseHandle(handle);
+			handle.Dispose();
 		}
 
 		/// <summary>

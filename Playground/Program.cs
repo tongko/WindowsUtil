@@ -1,7 +1,7 @@
-﻿using Delimon.Win32.IO;
+﻿using System;
+using System.Diagnostics;
 using SizeExplorer.Core;
 using SizeExplorer.Model;
-using System;
 
 namespace Playground
 {
@@ -9,13 +9,35 @@ namespace Playground
 	{
 		static void Main(string[] args)
 		{
-			const string FilePath = @"E:\Users\tliew\AppData\Local\Microsoft\Windows Store\Cache\0";
+			const string FilePath = @"E:";
+			//Win32Native.WIN32_FIND_DATA data;
+			//var h = Win32Native.FindFirstFile(FilePath, out data);
+			//h.Dispose();
+			var sw = new Stopwatch();
+			Console.WriteLine("Begining while construct.");
+			var node = new SizeNode(FilePath, "");
+			sw.Start();
+			FileSizeHelper.Build(node);
+			sw.Stop();
+			Console.WriteLine("Time taken: {0}", sw.Elapsed);
+
+			//sw.Reset();
+			//Console.WriteLine("Begining recursive construct.");
+			//node = new SizeNode(FilePath, "");
+			//sw.Start();
+			//FileSizeHelper.BuildTreeAtRoot(node, null, null);
+			//sw.Stop();
+			//Console.WriteLine("Time taken: {0}", sw.Elapsed);
+
+
+
+
 			//var fi = new FileInfo(FilePath);
 
-			var node = new SizeNode(new DirectoryInfo(FilePath));
-			Console.WriteLine(@"Calculating . . .");
-			FileSizeHelper.BuildTree(node, null);
-			FileSizeHelper.CalculateSize(node);
+			//var node = new SizeNode(new DirectoryInfo(FilePath));
+			//Console.WriteLine(@"Calculating . . .");
+			//FileSizeHelper.BuildTree(node, null);
+			//FileSizeHelper.CalculateSize(node);
 
 			//var rp = new ReparsePoint(@"D:\Projects");
 			//Console.WriteLine("Target: {0}", rp.Target);

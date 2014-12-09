@@ -54,7 +54,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\CalculateJob.cs" />
     <Compile Include="Core\DiskDriveInfo.cs" />
+    <Compile Include="Core\ListViewHelper.cs" />
+    <Compile Include="Core\SafeFindHandle.cs" />
+    <Compile Include="FileSystem\FileSystemEnumerable.cs" />
+    <Compile Include="FileSystem\FileSystemEnumerator.cs" />
+    <Compile Include="FileSystem\InvalidPathFormatException.cs" />
+    <Compile Include="FileSystem\Win32FsData.cs" />
     <Compile Include="Model\DiskSizeInfoCache.cs" />
     <Compile Include="Core\IHandleThreadException.cs" />
     <Compile Include="Core\PhysicalMedia.cs" />
