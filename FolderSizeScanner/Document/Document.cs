@@ -28,7 +28,7 @@ namespace FolderSizeScanner.Document
 
 		public ISizeNode FindNode(string path)
 		{
-
+			return null;
 		}
 	}
 }
