@@ -44,11 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Document.cs" />
-    <Compile Include="Core\DocumentHelper.cs" />
-    <Compile Include="Core\IDocument.cs" />
+    <Compile Include="Document\Document.cs" />
+    <Compile Include="Document\DocumentFormatException.cs" />
+    <Compile Include="Document\DocumentHelper.cs" />
+    <Compile Include="Document\DocumentWriter.cs" />
+    <Compile Include="Document\IDocument.cs" />
     <Compile Include="Core\ISizeNode.cs" />
     <Compile Include="Core\SafeFindHandle.cs" />
+    <Compile Include="Document\DocumentReader.cs" />
     <Compile Include="Core\SizeNode.cs" />
     <Compile Include="Core\Win32.cs" />
     <Compile Include="UI\FormMain.cs">
@@ -68,6 +71,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="UI\FormMain.resx">
+      <DependentUpon>FormMain.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
