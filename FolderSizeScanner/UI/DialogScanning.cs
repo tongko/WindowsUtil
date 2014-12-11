@@ -1,20 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FolderSizeScanner.Core;
 using System.Windows.Forms;
 
 namespace FolderSizeScanner.UI
 {
-	public partial class DialogScanning : Form
+	partial class DialogScanning : Form
 	{
-		public DialogScanning()
+		private readonly AnalyzeDriveJob _job;
+
+		DialogScanning(AnalyzeDriveJob job)
 		{
+			_job = job;
 			InitializeComponent();
+		}
+
+		protected override void OnShown(System.EventArgs e)
+		{
+			base.OnShown(e);
+
+			progress.Style = ProgressBarStyle.Marquee;
 		}
 	}
 }

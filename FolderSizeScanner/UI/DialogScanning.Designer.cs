@@ -33,7 +33,7 @@
 			this.lblAction = new System.Windows.Forms.Label();
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
-			this.animatedCircle1 = new AnimatedCircle();
+			this.animatedCircle1 = new FolderSizeScanner.UI.AnimatedCircle();
 			this.SuspendLayout();
 			// 
 			// lblItem
@@ -50,7 +50,7 @@
 			// 
 			this.progress.Location = new System.Drawing.Point(26, 112);
 			this.progress.Name = "progress";
-			this.progress.Size = new System.Drawing.Size(563, 16);
+			this.progress.Size = new System.Drawing.Size(563, 23);
 			this.progress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.progress.TabIndex = 1;
 			this.progress.UseWaitCursor = true;
@@ -98,6 +98,7 @@
 			this.animatedCircle1.ShadowWidth = 0F;
 			this.animatedCircle1.Size = new System.Drawing.Size(80, 80);
 			this.animatedCircle1.TabIndex = 5;
+			this.animatedCircle1.UseWaitCursor = true;
 			// 
 			// DialogScanning
 			// 
