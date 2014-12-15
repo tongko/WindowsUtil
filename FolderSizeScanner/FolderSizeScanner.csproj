@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\ControlHelper.cs" />
     <Compile Include="Core\DiskSizeInfo.cs" />
     <Compile Include="Core\FsoHelper.cs" />
     <Compile Include="Core\FindData.cs" />

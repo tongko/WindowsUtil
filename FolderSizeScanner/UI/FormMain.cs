@@ -1,4 +1,5 @@
-﻿using FolderSizeScanner.Properties;
+﻿using FolderSizeScanner.Core;
+using FolderSizeScanner.Properties;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
@@ -10,18 +11,16 @@ namespace FolderSizeScanner.UI
 		public FormMain()
 		{
 			InitializeComponent();
-
-			LoadSettings();
 		}
 
 		private void LoadSettings()
 		{
-			SuspendLayout();
+			//			SuspendLayout();
 
 			Size = Settings.Default.WndSize;
 			Location = Settings.Default.WndLocation;
 
-			ResumeLayout(true);
+			//			ResumeLayout(true);
 		}
 
 		/// <summary>
@@ -31,6 +30,7 @@ namespace FolderSizeScanner.UI
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
+			LoadSettings();
 		}
 
 		/// <summary>
@@ -39,28 +39,10 @@ namespace FolderSizeScanner.UI
 		/// <param name="e">A <see cref="T:System.ComponentModel.CancelEventArgs"/> that contains the event data. </param>
 		protected override void OnClosing(CancelEventArgs e)
 		{
+			Settings.Default.WndLocation = Location;
+			Settings.Default.WndSize = Size;
 			Settings.Default.Save();
 			base.OnClosing(e);
-		}
-
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.SizeChanged"/> event.
-		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
-		protected override void OnSizeChanged(EventArgs e)
-		{
-			Settings.Default.WndSize = Size;
-			base.OnSizeChanged(e);
-		}
-
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.LocationChanged"/> event.
-		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
-		protected override void OnLocationChanged(EventArgs e)
-		{
-			Settings.Default.WndLocation = Location;
-			base.OnLocationChanged(e);
 		}
 
 		protected virtual void Open()
@@ -96,6 +78,13 @@ namespace FolderSizeScanner.UI
 					Save();
 					break;
 			}
+		}
+
+		private void newToolStripButton_Click(object sender, EventArgs e)
+		{
+			var job = new AnalyzeDriveJob("C:\\");
+			var dlg = new DialogScanning(job);
+			dlg.ShowDialog(this);
 		}
 	}
 }
