@@ -44,9 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\ControlHelper.cs" />
+    <Compile Include="Core\DiskSizeInfo.cs" />
+    <Compile Include="Core\FsoHelper.cs" />
     <Compile Include="Core\FindData.cs" />
     <Compile Include="Core\FsoEnumerator.cs" />
     <Compile Include="Core\InvalidPathFormatException.cs" />
+    <Compile Include="Core\AnalyzeDriveJob.cs" />
+    <Compile Include="Core\JobStatus.cs" />
     <Compile Include="Document\Document.cs" />
     <Compile Include="Document\DocumentFormatException.cs" />
     <Compile Include="Document\DocumentHelper.cs" />

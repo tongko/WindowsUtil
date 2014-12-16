@@ -90,7 +90,7 @@ namespace FolderSizeScanner.Core
 			get { return Current; }
 		}
 
-		void System.IDisposable.Dispose()
+		void IDisposable.Dispose()
 		{
 			if (_findHandle != null)
 				_findHandle.Dispose();
@@ -108,7 +108,7 @@ namespace FolderSizeScanner.Core
 
 		void IEnumerator.Reset()
 		{
-			throw new System.NotImplementedException();
+			Reset();
 		}
 
 		#endregion

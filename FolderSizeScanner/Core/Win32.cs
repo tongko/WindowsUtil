@@ -15,6 +15,9 @@ namespace FolderSizeScanner.Core
 		public const uint IO_REPARSE_TAG_SYMLINK = 0xA000000C;			// SYMLINK or SYMLINKD (see http://wesnerm.blogs.com/net_undocumented/2006/10/index.html)
 		public const uint FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
 		public const uint FILE_FLAG_OPEN_REPARSE_POINT = 0x00200000;
+		public const uint FILE_DEVICE_FILE_SYSTEM = 9;
+		public const uint FILE_ANY_ACCESS = 0;
+		public const uint METHOD_BUFFERED = 0;
 		public const int MAXIMUM_REPARSE_DATA_BUFFER_SIZE = 16 * 1024;
 		public const int FSCTL_GET_REPARSE_POINT = 42;
 
