@@ -1,7 +1,8 @@
-﻿using FolderSizeScanner.Core;
-using System;
+﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using FolderSizeScanner.Core;
 
 namespace FolderSizeScanner.UI
 {
@@ -9,6 +10,7 @@ namespace FolderSizeScanner.UI
 	{
 		private CancellationTokenSource _cts;
 		private readonly AnalyzeDriveJob _job;
+		private Task<ISizeNode> _sizeNode;
 
 		public DialogScanning(AnalyzeDriveJob job)
 		{
@@ -20,6 +22,11 @@ namespace FolderSizeScanner.UI
 			_job.JobFaulty += _job_JobFaulty;
 
 			InitializeComponent();
+		}
+
+		public ISizeNode SizeNode
+		{
+			get { return _sizeNode.Result; }
 		}
 
 		void _job_JobFaulty(object sender, Exception e)
@@ -87,7 +94,7 @@ namespace FolderSizeScanner.UI
 
 			progress.Style = ProgressBarStyle.Marquee;
 			_cts = new CancellationTokenSource();
-			_job.StartAsync(_cts.Token);
+			_sizeNode = _job.StartAsync(_cts.Token);
 		}
 
 		private void btnCancel_Click(object sender, EventArgs e)

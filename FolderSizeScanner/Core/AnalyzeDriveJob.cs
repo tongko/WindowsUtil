@@ -105,7 +105,7 @@ namespace FolderSizeScanner.Core
 
 		private ulong Build(ISizeNode node, CancellationToken token)
 		{
-			const string encounterText = "Encounter ";
+			const string encounterText = "Scanning ";
 			ulong fsoCount = 1;
 			var enumerators = new Stack<FsoEnumerator>();
 			var nodes = new Stack<ISizeNode>();
@@ -129,7 +129,7 @@ namespace FolderSizeScanner.Core
 					if (dir.Name == "." || dir.Name == "..") continue;
 
 					var fp = Path.Combine(n.FullPath, dir.Name);
-					if (FsoHelper.IsHardLink(fp))
+					if (Fso.IsHardLink(fp))
 					{
 						continue;
 					}
@@ -137,7 +137,10 @@ namespace FolderSizeScanner.Core
 					DoReport(encounterText, fp);
 					var newNode = new SizeNode(fp);
 					if (!dir.IsDirectory)
+					{
 						newNode.SetIsFile();
+						newNode.AddSizeOnDisk(dir.Size);
+					}
 					n.AddChildNode(newNode);
 
 					if (!dir.IsDirectory) continue;

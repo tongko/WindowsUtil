@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace FolderSizeScanner.Core
 {
-	class FsoHelper
+	class Fso
 	{
 		public static readonly List<DiskSizeInfo> DiskSizeInfoCache = new List<DiskSizeInfo>();
 

@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileSystemObjects\AnalyzeDiskDrive.cs" />
     <Compile Include="Core\ControlHelper.cs" />
     <Compile Include="Core\DiskSizeInfo.cs" />
     <Compile Include="Core\FsoHelper.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="Document\DocumentReader.cs" />
     <Compile Include="Core\SizeNode.cs" />
     <Compile Include="Core\Win32.cs" />
+    <Compile Include="FileSystemObjects\FileSystemObject.cs" />
     <Compile Include="UI\AnimatedCircle.cs">
       <SubType>UserControl</SubType>
     </Compile>
