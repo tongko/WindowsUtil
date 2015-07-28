@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
-namespace FolderSizeScanner
+namespace FolderSizeScanner.UI
 {
 	public partial class DialogPickDrive : Form
 	{
@@ -22,6 +22,11 @@ namespace FolderSizeScanner
 			{
 				cmbDrive.Items.Add(info);
 			}
+		}
+
+		private void btnScan_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

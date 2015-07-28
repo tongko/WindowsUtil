@@ -44,7 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileSystemObjects\AnalyzeDiskDrive.cs" />
     <Compile Include="Core\ControlHelper.cs" />
     <Compile Include="Core\DiskSizeInfo.cs" />
     <Compile Include="Core\FsoHelper.cs" />
@@ -53,10 +52,10 @@
     <Compile Include="Core\InvalidPathFormatException.cs" />
     <Compile Include="Core\AnalyzeDriveJob.cs" />
     <Compile Include="Core\JobStatus.cs" />
-    <Compile Include="DialogPickDrive.cs">
+    <Compile Include="UI\DialogPickDrive.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DialogPickDrive.Designer.cs">
+    <Compile Include="UI\DialogPickDrive.Designer.cs">
       <DependentUpon>DialogPickDrive.cs</DependentUpon>
     </Compile>
     <Compile Include="Document\Document.cs" />
@@ -69,7 +68,6 @@
     <Compile Include="Document\DocumentReader.cs" />
     <Compile Include="Core\SizeNode.cs" />
     <Compile Include="Core\Win32.cs" />
-    <Compile Include="FileSystemObjects\FileSystemObject.cs" />
     <Compile Include="UI\AnimatedCircle.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -96,7 +94,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="DialogPickDrive.resx">
+    <EmbeddedResource Include="UI\DialogPickDrive.resx">
       <DependentUpon>DialogPickDrive.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

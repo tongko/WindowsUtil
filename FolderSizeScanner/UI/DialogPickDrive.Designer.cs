@@ -1,6 +1,4 @@
-﻿using FolderSizeScanner.UI;
-
-namespace FolderSizeScanner
+﻿namespace FolderSizeScanner.UI
 {
 	partial class DialogPickDrive
 	{
@@ -31,8 +29,8 @@ namespace FolderSizeScanner
 		private void InitializeComponent()
 		{
 			this.label1 = new System.Windows.Forms.Label();
-			this.cmbDrive = new FolderSizeScanner.UI.CustomCombo();
 			this.btnScan = new System.Windows.Forms.Button();
+			this.cmbDrive = new FolderSizeScanner.UI.CustomCombo();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -44,17 +42,6 @@ namespace FolderSizeScanner
 			this.label1.Text = "Select drive to scan:";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// cmbDrive
-			// 
-			this.cmbDrive.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-			this.cmbDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cmbDrive.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.cmbDrive.FormattingEnabled = true;
-			this.cmbDrive.Location = new System.Drawing.Point(140, 13);
-			this.cmbDrive.Name = "cmbDrive";
-			this.cmbDrive.Size = new System.Drawing.Size(121, 23);
-			this.cmbDrive.TabIndex = 1;
-			// 
 			// btnScan
 			// 
 			this.btnScan.Location = new System.Drawing.Point(186, 54);
@@ -63,6 +50,18 @@ namespace FolderSizeScanner
 			this.btnScan.TabIndex = 2;
 			this.btnScan.Text = "&Start";
 			this.btnScan.UseVisualStyleBackColor = true;
+			this.btnScan.Click += new System.EventHandler(this.btnScan_Click);
+			// 
+			// cmbDrive
+			// 
+			this.cmbDrive.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+			this.cmbDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cmbDrive.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.cmbDrive.FormattingEnabled = true;
+			this.cmbDrive.Location = new System.Drawing.Point(140, 13);
+			this.cmbDrive.Name = "cmbDrive";
+			this.cmbDrive.Size = new System.Drawing.Size(121, 24);
+			this.cmbDrive.TabIndex = 1;
 			// 
 			// DialogPickDrive
 			// 
