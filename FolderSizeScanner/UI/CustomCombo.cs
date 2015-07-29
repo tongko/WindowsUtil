@@ -43,7 +43,7 @@ namespace FolderSizeScanner.UI
 		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
 			if (e.Index < 0) return;
-	
+
 			var g = e.Graphics;
 			var b = new SolidBrush(e.ForeColor);
 			var di = GetItem(e.Index);
@@ -58,13 +58,13 @@ namespace FolderSizeScanner.UI
 				return;
 			}
 
-			var bb = new SolidBrush(Color.Gray);
+			var bb = new SolidBrush(Color.LightGray);
 			var height = e.Bounds.Height - 4;
-			var rect = new Rectangle(e.Bounds.Left + 2, e.Bounds.Top + 2, height, height);
+			var rect = new Rectangle(e.Bounds.Left, e.Bounds.Top, height + 4, height + 4);
 			g.FillRectangle(bb, rect);
 
 			var width = e.Bounds.Left + 4F + height;
-			var newRect = new RectangleF(width, e.Bounds.Top + 2, e.Bounds.Width - width - 4, height); 
+			var newRect = new RectangleF(width, e.Bounds.Top + 2, e.Bounds.Width - width - 4, height);
 
 			var sf = new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center };
 			e.Graphics.DrawString(di.Name.Substring(0, 1), Font, b, newRect, sf);
@@ -75,7 +75,7 @@ namespace FolderSizeScanner.UI
 			e.DrawFocusRectangle();
 		}
 
-		protected virtual DriveInfo GetItem(int index)
+		public virtual DriveInfo GetItem(int index)
 		{
 			if (index < 0) return null;
 

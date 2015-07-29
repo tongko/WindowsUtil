@@ -25,6 +25,15 @@ namespace FolderSizeScanner.Core
 			_stopwatch = new Stopwatch();
 		}
 
+		public AnalyzeDriveJob(DriveInfo di)
+		{
+			if (di == null)
+				throw new ArgumentNullException("di");
+
+			_driveInfo = di.RootDirectory;
+			_stopwatch = new Stopwatch();
+		}
+
 		public event EventHandler JobStart;
 
 		public event EventHandler JobCanceled;
@@ -105,7 +114,7 @@ namespace FolderSizeScanner.Core
 
 		private ulong Build(ISizeNode node, CancellationToken token)
 		{
-			const string encounterText = "Scanning ";
+			const string encounterText = "Found ";
 			ulong fsoCount = 1;
 			var enumerators = new Stack<FsoEnumerator>();
 			var nodes = new Stack<ISizeNode>();
