@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using FolderSizeScanner.Core;
 
 namespace FolderSizeScanner.UI
 {
@@ -34,9 +33,14 @@ namespace FolderSizeScanner.UI
 				return;
 			}
 			var di = cmbDrive.GetItem(cmbDrive.SelectedIndex);
-			var job = new AnalyzeDriveJob(di);
-			var dlg = new DialogScanning(job);
-			dlg.ShowDialog(this);
+			//var job = new AnalyzeDriveJob(di);
+			//var dlg = new DialogScanning(job);
+			//if (dlg.ShowDialog(this) == DialogResult.OK)
+			//{
+
+			var dlgFolder = new DialogFolderList(di, null);
+			dlgFolder.ShowDialog(this);
+			//}
 		}
 
 		private void cmbDrive_DropDown(object sender, EventArgs e)

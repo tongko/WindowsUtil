@@ -46,12 +46,21 @@
   <ItemGroup>
     <Compile Include="Core\ControlHelper.cs" />
     <Compile Include="Core\DiskSizeInfo.cs" />
+    <Compile Include="Core\EmbededResources.cs" />
     <Compile Include="Core\FsoHelper.cs" />
     <Compile Include="Core\FindData.cs" />
     <Compile Include="Core\FsoEnumerator.cs" />
+    <Compile Include="Core\Geometry.cs" />
     <Compile Include="Core\InvalidPathFormatException.cs" />
     <Compile Include="Core\AnalyzeDriveJob.cs" />
     <Compile Include="Core\JobStatus.cs" />
+    <Compile Include="Core\PieSlice.cs" />
+    <Compile Include="UI\DialogFolderList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\DialogFolderList.Designer.cs">
+      <DependentUpon>DialogFolderList.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\DialogPickDrive.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -87,7 +96,7 @@
       <DependentUpon>DialogScanning.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\FolderList.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UI\FolderList.Designer.cs">
       <DependentUpon>FolderList.cs</DependentUpon>
@@ -100,6 +109,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="UI\DialogFolderList.resx">
+      <DependentUpon>DialogFolderList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\DialogPickDrive.resx">
       <DependentUpon>DialogPickDrive.cs</DependentUpon>
     </EmbeddedResource>
@@ -111,6 +123,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="UI\AnimatedCircle.resx">
       <DependentUpon>AnimatedCircle.cs</DependentUpon>
@@ -120,6 +133,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\DialogScanning.resx">
       <DependentUpon>DialogScanning.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\FolderList.resx">
+      <DependentUpon>FolderList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>

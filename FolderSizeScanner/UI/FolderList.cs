@@ -1,15 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using FolderSizeScanner.Core;
 
 namespace FolderSizeScanner.UI
 {
-	public partial class FolderList : Control
+	public partial class FolderList : UserControl
 	{
 		private DriveInfo _drive;
 		private ISizeNode _sizeNode;
+		private PieSlice[] _slices = new PieSlice[2];
 
 		public event EventHandler DriveChanged = delegate { };
 		public event EventHandler SizeNodeChanged = delegate { };
@@ -35,6 +41,8 @@ namespace FolderSizeScanner.UI
 			set
 			{
 				_drive = value;
+				if (_drive != null)
+					CreatePieSlice();
 				OnDriveChanged(EventArgs.Empty);
 			}
 		}
@@ -46,14 +54,215 @@ namespace FolderSizeScanner.UI
 
 		protected override void OnPaint(PaintEventArgs pe)
 		{
-			var g = pe.Graphics;
+			var gr = pe.Graphics;
 
-			g.FillRectangle(Brushes.White, Bounds);
+			//	Clear background with white
+			gr.Clear(Color.White);
 
-			if (Drive != null)
+			//	Paint drive info if exists.
+			Image bmp = PaintDeviceInfo(pe);
+			var bmpRect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+			var clipRect = pe.ClipRectangle;
+			clipRect.Intersect(bmpRect);
+
+			gr.DrawImage(bmp, clipRect, clipRect, GraphicsUnit.Pixel);
+		}
+
+		private Bitmap PaintDeviceInfo(PaintEventArgs pe)
+		{
+			var w = Width - 40;
+			if (w < 450) w = 400;
+			var h = 250;
+			var bmp = new Bitmap(w, h, PixelFormat.Format64bppPArgb);
+			var gr = pe.Graphics;
+			var g = Graphics.FromImage(bmp);
+
+			if (Drive == null) return bmp;
+
+			g.SmoothingMode = SmoothingMode.HighQuality;
+			//	Get drive image from resorce and draw on canvas
+			using (var driveImage =
+				Image.FromStream(
+					EmbededResources.GetResourceAsStream("FolderSizeScanner.Resources.Device.png", Assembly.GetExecutingAssembly()),
+					true))
+				g.DrawImage(driveImage, new Rectangle(20, 20, 128, 128));
+
+			//	Paint capacity info
+			PaintCapacityInfo(pe);
+
+			//	Draw the capacity info
+			PaintCapacityInfo(pe);
+
+			//	Render drive info
+			gr.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+			var left = 160; //	Text lay at left side of drive image.
+			var top = 20;	//	Start from top of image.
+			var newLine = 3;
+			var headerFont = new Font("Calibri", 15.75f, FontStyle.Bold);
+			var text = Drive.Name.Substring(0, 1) + " Drive";
+			var brush = Brushes.Navy;
+			var sf = new StringFormat()
 			{
+				Alignment = StringAlignment.Near,
+				FormatFlags = StringFormatFlags.NoWrap,
+				LineAlignment = StringAlignment.Center
+			};
+			var size = gr.MeasureString(text, headerFont, new PointF(left, top), sf);
+			var location = new PointF(left, top);
+			gr.DrawString(text, headerFont, brush, new RectangleF(location, size));
 
+			var textFont = new Font("Segoe UI", 9.75f, FontStyle.Regular);
+
+			//	Drive Format
+			text = "Drive Format: ";
+			top += (int)size.Height + newLine + 5;	// New line
+			brush = Brushes.Black;
+			location = new PointF(left, top);
+			size = gr.MeasureString(text, textFont, location, sf);
+			gr.DrawString(text, textFont, brush, new RectangleF(location, size));
+			text = Drive.DriveFormat;
+			var contentPt = new PointF(location.X + 100f, location.Y);
+			var contentSize = gr.MeasureString(text, textFont, contentPt, sf);
+			gr.DrawString(text, textFont, brush, new RectangleF(contentPt, contentSize));
+
+
+			text = "Type: ";
+			top += (int)size.Height + newLine;
+			location = new PointF(left, top);
+			size = gr.MeasureString(text, textFont, location, sf);
+			gr.DrawString(text, textFont, brush, new RectangleF(location, size));
+			text = GetDriveType(Drive.DriveType);
+			contentPt = new PointF(location.X + 100f, location.Y);
+			contentSize = gr.MeasureString(text, textFont, contentPt, sf);
+			gr.DrawString(text, textFont, brush, new RectangleF(contentPt, contentSize));
+
+			text = "Volume label: ";
+			top += (int)size.Height + newLine;
+			location = new PointF(left, top);
+			size = gr.MeasureString(text, textFont, location, sf);
+			gr.DrawString(text, textFont, brush, new RectangleF(location, size));
+			text = Drive.VolumeLabel;
+			contentPt = new PointF(location.X + 100f, location.Y);
+			contentSize = gr.MeasureString(text, textFont, contentPt, sf);
+			gr.DrawString(text, textFont, brush, new RectangleF(contentPt, contentSize));
+
+			text = "Root directory: ";
+			top += (int)size.Height + newLine;
+			location = new PointF(left, top);
+			size = gr.MeasureString(text, textFont, location, sf);
+			gr.DrawString(text, textFont, brush, new RectangleF(location, size));
+			text = Drive.RootDirectory.FullName;
+			contentPt = new PointF(location.X + 100f, location.Y);
+			contentSize = gr.MeasureString(text, textFont, contentPt, sf);
+			gr.DrawString(text, textFont, brush, new RectangleF(contentPt, contentSize));
+
+			text = Drive.IsReady ? "Drive is Online" : "Drive is Offline";
+			top += (int)size.Height + newLine;
+			location = new PointF(left, top);
+			size = gr.MeasureString(text, textFont, location, sf);
+			gr.DrawString(text, textFont, brush, new RectangleF(location, size));
+
+			return bmp;
+		}
+
+		private void PaintCapacityInfo(PaintEventArgs pe)
+		{
+			if (_slices == null) return;
+
+			var offset3D = new Point(0, 20);
+			var width = 160 - offset3D.X;
+			var height = 160 - offset3D.Y;
+
+			var pieRect = new Rectangle(Width - 160, 20, width, height);
+
+			foreach (var slice in _slices)
+			{
+				PaintPieSlice(pe.Graphics, slice.TopBrush, slice.TopPen, slice.SideBrush, offset3D, slice.ExplodeDistance, pieRect,
+					slice.StartAngle, slice.SweepAngle);
 			}
+		}
+
+		private void CreatePieSlice()
+		{
+			var total = (float)_drive.TotalSize;
+			var free = (float)_drive.TotalFreeSpace;
+			const float totalPercent = 100f;
+			var freePercent = free / total * 100f;
+
+			_slices[0] = new PieSlice
+			{
+				StartAngle = 180,
+				SweepAngle = (totalPercent - freePercent) * 3.6f,
+				TopBrush = Brushes.Blue,
+				TopPen = Pens.Blue,
+				SideBrush = Brushes.DarkBlue
+			};
+
+			_slices[1] = new PieSlice
+			{
+				StartAngle = 180 + _slices[0].SweepAngle - 360f,
+				SweepAngle = freePercent * 3.6f,
+				TopBrush = Brushes.Magenta,
+				TopPen = Pens.Magenta,
+				SideBrush = Brushes.DarkViolet,
+				ExplodeDistance = 20
+			};
+		}
+
+		private void PaintPieSlice(Graphics gr, Brush topBrush, Pen topPen, Brush sideBrush, Point offset3D,
+			float explodeDistance, Rectangle bounds, float startAngle, float sweepAngle)
+		{
+			// Calculate the explode offset.
+			var explodeAngle = (startAngle + sweepAngle / 2f) * Math.PI / 180f;
+			var dx = (int)(explodeDistance * Math.Cos(explodeAngle));
+			var dy = (int)(explodeDistance * Math.Sin(explodeAngle));
+
+			// Create the top of the side.
+			var topRect = new Rectangle(bounds.X + dx, bounds.Y + dy, bounds.Width, bounds.Height);
+			var path = new GraphicsPath();
+			path.AddPie(topRect, startAngle, sweepAngle);
+
+			// Create the bottom of the side.
+			var bottomRect = new Rectangle(topRect.X + offset3D.X, topRect.Y + offset3D.Y, bounds.Width, bounds.Height);
+			path.AddPie(bottomRect, startAngle, sweepAngle);
+
+			// Convert the GraphicsPath into a list of points.
+			path.Flatten();
+			var pathPoints = path.PathPoints;
+			var pointsList = new List<PointF>(pathPoints);
+
+			// Make a convex hull.
+			var hullPoints = Geometry.MakeConvexHull(pointsList);
+
+			// Fill the convex hull.
+			gr.FillPolygon(sideBrush, hullPoints.ToArray());
+
+			// Draw the top.
+			gr.FillPie(topBrush, topRect, startAngle, sweepAngle);
+			gr.DrawPie(topPen, topRect, startAngle, sweepAngle);
+		}
+
+		private static string GetDriveType(DriveType type)
+		{
+			switch (type)
+			{
+				case DriveType.CDRom:
+					return "CD ROM";
+				case DriveType.Fixed:
+					return "Fixed Disk Drive";
+				case DriveType.Network:
+					return "Network Drive";
+				case DriveType.NoRootDirectory:
+					return "No Root Directory";
+				case DriveType.Ram:
+					return "RAM Disk";
+				case DriveType.Removable:
+					return "Removable Storage";
+				case DriveType.Unknown:
+					return "Unknown";
+			}
+
+			return null;
 		}
 
 		protected virtual void OnSizeNodeChanged(EventArgs e)

@@ -28,9 +28,18 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			components = new System.ComponentModel.Container();
+			this.SuspendLayout();
+			// 
+			// FolderList
+			// 
+			this.BackColor = System.Drawing.SystemColors.Window;
+			this.Name = "FolderList";
+			this.Size = new System.Drawing.Size(455, 533);
+			this.ResumeLayout(false);
+
 		}
 
 		#endregion
+
 	}
 }

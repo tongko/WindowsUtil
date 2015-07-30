@@ -117,7 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MsgResourceNotFound" xml:space="preserve">
-    <value>Could not find the resource: {0}. Check that the script file has been set as EMBEDDED RESOURCE. Using assembly: {1}</value>
-  </data>
 </root>
