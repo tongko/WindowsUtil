@@ -79,6 +79,7 @@ namespace FolderSizeScanner.UI
 
 			if (Drive == null) return bmp;
 
+			gr.SmoothingMode = SmoothingMode.HighQuality;
 			g.SmoothingMode = SmoothingMode.HighQuality;
 			//	Get drive image from resorce and draw on canvas
 			using (var driveImage =
@@ -170,8 +171,8 @@ namespace FolderSizeScanner.UI
 			if (_slices == null) return;
 
 			var offset3D = new Point(0, 20);
-			var width = 160 - offset3D.X;
-			var height = 160 - offset3D.Y;
+			var width = 160 - offset3D.X - 20;
+			var height = (160 - offset3D.Y - 20) / 2;
 
 			var pieRect = new Rectangle(Width - 160, 20, width, height);
 
