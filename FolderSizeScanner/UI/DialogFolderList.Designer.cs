@@ -38,16 +38,20 @@
 			this.folderList1.Drive = null;
 			this.folderList1.Location = new System.Drawing.Point(0, 0);
 			this.folderList1.Name = "folderList1";
-			this.folderList1.Size = new System.Drawing.Size(580, 610);
+			this.folderList1.Size = new System.Drawing.Size(740, 704);
 			this.folderList1.SizeNode = null;
 			this.folderList1.TabIndex = 0;
 			// 
 			// DialogFolderList
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(580, 610);
+			this.ClientSize = new System.Drawing.Size(740, 704);
 			this.Controls.Add(this.folderList1);
+			this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "DialogFolderList";
 			this.Text = "DialogFolderList";
 			this.ResumeLayout(false);

@@ -167,9 +167,15 @@ namespace FolderSizeScanner.UI
 		{
 			//if (_slices == null) return;
 
+<<<<<<< HEAD
+			var offset3D = new Point(0, 20);
+			var width = 160 - offset3D.X - 20;
+			var height = (160 - offset3D.Y - 20) / 2;
+=======
 			//var offset3D = new Point(0, 20);
 			//var width = 160 - offset3D.X;
 			//var height = (160 - offset3D.Y) / 4 * 3;
+>>>>>>> 7f30c7c3eb3928341b9b3851165cd1d1efde9f38
 
 			//var pieRect = new Rectangle(Width - 180, 35, width, height);
 
