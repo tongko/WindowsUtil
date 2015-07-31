@@ -28,18 +28,32 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.pcCap = new FolderSizeScanner.UI.Charts.PieChart();
 			this.SuspendLayout();
+			// 
+			// pcCap
+			// 
+			this.pcCap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.pcCap.Location = new System.Drawing.Point(340, 40);
+			this.pcCap.Name = "pcCap";
+			this.pcCap.Size = new System.Drawing.Size(300, 120);
+			this.pcCap.TabIndex = 0;
+			this.pcCap.ToolTips = null;
 			// 
 			// FolderList
 			// 
 			this.BackColor = System.Drawing.SystemColors.Window;
+			this.Controls.Add(this.pcCap);
+			this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Name = "FolderList";
-			this.Size = new System.Drawing.Size(455, 533);
+			this.Size = new System.Drawing.Size(660, 533);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
+
+		private Charts.PieChart pcCap;
 
 	}
 }

@@ -8,6 +8,8 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using FolderSizeScanner.Core;
+using FolderSizeScanner.UI.Charts;
+using PieSlice = FolderSizeScanner.Core.PieSlice;
 
 namespace FolderSizeScanner.UI
 {
@@ -55,6 +57,7 @@ namespace FolderSizeScanner.UI
 		protected override void OnPaint(PaintEventArgs pe)
 		{
 			var gr = pe.Graphics;
+			gr.SmoothingMode = SmoothingMode.HighQuality;
 
 			//	Clear background with white
 			gr.Clear(Color.White);
@@ -86,12 +89,6 @@ namespace FolderSizeScanner.UI
 					EmbededResources.GetResourceAsStream("FolderSizeScanner.Resources.Device.png", Assembly.GetExecutingAssembly()),
 					true))
 				g.DrawImage(driveImage, new Rectangle(20, 20, 128, 128));
-
-			//	Paint capacity info
-			PaintCapacityInfo(pe);
-
-			//	Draw the capacity info
-			PaintCapacityInfo(pe);
 
 			//	Render drive info
 			gr.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
@@ -167,19 +164,19 @@ namespace FolderSizeScanner.UI
 
 		private void PaintCapacityInfo(PaintEventArgs pe)
 		{
-			if (_slices == null) return;
+			//if (_slices == null) return;
 
-			var offset3D = new Point(0, 20);
-			var width = 160 - offset3D.X;
-			var height = 160 - offset3D.Y;
+			//var offset3D = new Point(0, 20);
+			//var width = 160 - offset3D.X;
+			//var height = (160 - offset3D.Y) / 4 * 3;
 
-			var pieRect = new Rectangle(Width - 160, 20, width, height);
+			//var pieRect = new Rectangle(Width - 180, 35, width, height);
 
-			foreach (var slice in _slices)
-			{
-				PaintPieSlice(pe.Graphics, slice.TopBrush, slice.TopPen, slice.SideBrush, offset3D, slice.ExplodeDistance, pieRect,
-					slice.StartAngle, slice.SweepAngle);
-			}
+			//foreach (var slice in _slices)
+			//{
+			//	PaintPieSlice(pe.Graphics, slice.TopBrush, slice.TopPen, slice.SideBrush, offset3D, slice.ExplodeDistance, pieRect,
+			//		slice.StartAngle, slice.SweepAngle);
+			//}
 		}
 
 		private void CreatePieSlice()
@@ -189,24 +186,40 @@ namespace FolderSizeScanner.UI
 			const float totalPercent = 100f;
 			var freePercent = free / total * 100f;
 
-			_slices[0] = new PieSlice
-			{
-				StartAngle = 180,
-				SweepAngle = (totalPercent - freePercent) * 3.6f,
-				TopBrush = Brushes.Blue,
-				TopPen = Pens.Blue,
-				SideBrush = Brushes.DarkBlue
-			};
+			//_slices[0] = new PieSlice
+			//{
+			//	StartAngle = 180,
+			//	SweepAngle = (totalPercent - freePercent) * 3.6f,
+			//	TopBrush = Brushes.Blue,
+			//	TopPen = Pens.Blue,
+			//	SideBrush = Brushes.DarkBlue
+			//};
 
-			_slices[1] = new PieSlice
-			{
-				StartAngle = 180 + _slices[0].SweepAngle - 360f,
-				SweepAngle = freePercent * 3.6f,
-				TopBrush = Brushes.Magenta,
-				TopPen = Pens.Magenta,
-				SideBrush = Brushes.DarkViolet,
-				ExplodeDistance = 20
-			};
+			//_slices[1] = new PieSlice
+			//{
+			//	StartAngle = 180 + _slices[0].SweepAngle - 360f,
+			//	SweepAngle = freePercent * 3.6f,
+			//	TopBrush = Brushes.Magenta,
+			//	TopPen = Pens.Magenta,
+			//	SideBrush = Brushes.DarkViolet,
+			//	ExplodeDistance = 20
+			//};
+
+			pcCap.Values = new[] { (decimal)(totalPercent - freePercent), (decimal)freePercent };
+			pcCap.SliceRelativeDisplacements = new[] { 0.01f, 0.15f };
+			pcCap.Colors = new[] { Color.FromArgb(128, Color.Red), Color.FromArgb(128, Color.LawnGreen) };
+			pcCap.Texts = new[] { "Total Space", "Free Space" };
+			pcCap.ToolTips = new[] { (total / 1073741824).ToString("N") + "GB", (free / 1073741824).ToString("N") + "GB" };
+			pcCap.LeftMargin = 0;
+			pcCap.TopMargin = 0;
+			pcCap.RightMargin = 5;
+			pcCap.BottomMargin = 0;
+			pcCap.FitChart = false;
+			pcCap.SliceRelativeHeight = 0.23f;
+			pcCap.InitialAngle = 120f;
+			pcCap.EdgeLineWidth = 1f;
+			pcCap.EdgeColorType = EdgeColorType.DarkerThanSurface;
+			pcCap.ShadowStyle = ShadowStyle.GradualShadow;
 		}
 
 		private void PaintPieSlice(Graphics gr, Brush topBrush, Pen topPen, Brush sideBrush, Point offset3D,

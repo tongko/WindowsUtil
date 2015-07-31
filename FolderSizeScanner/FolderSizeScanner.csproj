@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Constants.cs" />
     <Compile Include="Core\ControlHelper.cs" />
     <Compile Include="Core\DiskSizeInfo.cs" />
     <Compile Include="Core\EmbededResources.cs" />
@@ -55,6 +56,10 @@
     <Compile Include="Core\AnalyzeDriveJob.cs" />
     <Compile Include="Core\JobStatus.cs" />
     <Compile Include="Core\PieSlice.cs" />
+    <Compile Include="UI\Charts\PieChart3D.cs" />
+    <Compile Include="UI\Charts\PieSlice.cs" />
+    <Compile Include="UI\Charts\Quadrilateral.cs" />
+    <Compile Include="UI\Charts\Utils.cs" />
     <Compile Include="UI\DialogFolderList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -109,6 +114,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\Charts\PieChart.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Charts\PieChart.Designer.cs">
+      <DependentUpon>PieChart.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="UI\DialogFolderList.resx">
       <DependentUpon>DialogFolderList.cs</DependentUpon>
     </EmbeddedResource>
